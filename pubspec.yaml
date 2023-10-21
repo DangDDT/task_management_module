@@ -42,7 +42,10 @@ dependencies:
   image_preview: ^1.0.4
 
   core_picker:
-    path: ../picker_package
+    # path: ../picker_package
+    git:
+      url: https://github.com/DangDDT/picker_package.git
+      ref: main
 
 dev_dependencies:
   flutter_test:
