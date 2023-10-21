@@ -3,20 +3,22 @@
 import 'package:faker/faker.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
+import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 
 import '../../../../core/utils/helpers/logger.dart';
 import '../../../domain/mock/dummy.dart';
 import '../../../domain/models/task_model.dart';
+import '../../../domain/requests/get_task_list_param.dart';
 import '../../global/module_controller.dart';
 import '../../view_models/state_model.dart';
 
-class TaskAlarmReminderController extends GetxController {
+class TaskAlmostDueController extends GetxController {
   ///Controllers
   final moduleController =
       Get.find<ModuleController>(tag: ModuleController.tag);
 
   ///States
-  final StateModel<List<TaskWeddingModel>> taskModel = StateModel(
+  final StateModel<List<TaskWeddingModel>> taskModels = StateModel(
     data: Rx(TaskWeddingModel.loadingList()),
   );
 
@@ -27,17 +29,28 @@ class TaskAlarmReminderController extends GetxController {
   }
 
   Future<void> loadTaskProgressData() async {
-    taskModel.loading(loadingData: TaskWeddingModel.loadingList());
+    taskModels.loading(loadingData: TaskWeddingModel.loadingList());
     try {
       await Future.delayed(
         Duration(seconds: faker.randomGenerator.integer(5)),
         () {
-          final data = Dummy.taskModel;
-          taskModel.success(data);
+          final data = Dummy.getDummyTasks(
+            GetTaskListParam(
+              pageSize: 9999,
+              pageIndex: 0,
+              duedateFrom: DateTime.now(),
+              duedateTo: DateTime.now().add(const Duration(days: 3)),
+              taskStatusCodes: [
+                TaskProgressEnum.toDo.toCode(),
+                TaskProgressEnum.inProgress.toCode(),
+              ],
+            ),
+          );
+          taskModels.success(data);
         },
       );
     } catch (e, stackTrace) {
-      taskModel.error(
+      taskModels.error(
         e.toString(),
         errorData: TaskWeddingModel.errorList(),
       );
@@ -49,17 +62,19 @@ class TaskAlarmReminderController extends GetxController {
     }
   }
 
-  Future<void> onTapTaskCard(TaskWeddingModel item) async {
-    Get.toNamed(
+  Future<void> onTapTaskCard(TaskWeddingModel item, String heroTag) async {
+    await Get.toNamed(
       RouteConstants.taskDetailRoute,
       arguments: {
         'taskId': item.id,
         'name': item.name,
         'description': item.description,
         'duedate': item.duedate,
-        'taskMasterName': item.taskMaster.name,
-        'serviceName': item.orderDetail.service.name,
+        'taskMasterName': item.taskMaster?.name,
+        'customerName': item.customer.fullName,
+        'serviceNames': item.orderDetails.map((e) => e.service.name).toList(),
         'status': item.status,
+        'heroTag': heroTag,
       },
     );
   }

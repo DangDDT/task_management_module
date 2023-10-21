@@ -59,6 +59,14 @@ class Page extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Management Module'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.toNamed(RouteConstants.taskListRoute);
+            },
+            icon: const Icon(Icons.list),
+          ),
+        ],
       ),
       body: const SingleChildScrollView(
         child: Column(
@@ -67,7 +75,7 @@ class Page extends StatelessWidget {
           children: [
             ProgressTaskView(),
             kGapH12,
-            TaskAlarmReminderView(),
+            TaskAlmostDueView(),
           ],
         ),
       ),

@@ -6,9 +6,11 @@ class JsonObjectErrorResponseMapper
   @override
   ServerError mapFromResponse(Map<String, dynamic>? response) {
     return ServerError(
-      generalServerStatusCode: response?['statusCode'],
-      generalMessage: response?['message'],
-      generalError: response?['error'],
+      generalServerStatusCode: response?['status'],
+      generalMessage: response?['title'],
+      // generalServerStatusCode: response?['statusCode'],
+      // generalMessage: response?['message'],
+      // generalError: response?['error'],
     );
   }
 }

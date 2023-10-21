@@ -1,13 +1,23 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/task_model.dart';
+import 'package:task_management_module/src/domain/models/task_order_detail.dart';
 import 'package:task_management_module/src/presentation/shared/circle_avatar_with_error_handler.dart';
 import 'package:task_management_module/src/presentation/views/task_detail/task_detail_view_controller.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
-import 'package:task_management_module/src/presentation/widgets/task_card.dart';
+import 'package:task_management_module/src/presentation/widgets/task_wedding_card.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/core.dart';
+import '../../../domain/domain.dart';
+import '../../shared/custom_chip.dart';
+import '../task_reminder/task_reminder_view.dart';
+import 'widgets/comment_task/comment_task_view.dart';
+import 'widgets/task_note_view.dart';
 
 class TaskDetailView extends StatelessWidget {
   const TaskDetailView({
@@ -17,77 +27,97 @@ class TaskDetailView extends StatelessWidget {
     required this.description,
     required this.duedate,
     required this.taskMasterName,
-    required this.serviceName,
+    required this.customerName,
+    required this.serviceNames,
+    required this.status,
+    this.heroTag,
   });
   final dynamic taskId;
   final String name;
   final String description;
   final DateTime duedate;
   final String taskMasterName;
-  final String serviceName;
+  final String customerName;
+  final List<String> serviceNames;
+  final String? heroTag;
+  final TaskProgressEnum status;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TaskDetailViewController>(
       init: TaskDetailViewController(id: taskId),
-      tag: 'TaskDetailViewController_$taskId',
       builder: (controller) {
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: kTheme.colorScheme.primaryContainer.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(8.0),
+        return RefreshIndicator(
+          onRefresh: () async {
+            await controller.fetchData();
+          },
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color:
+                          kTheme.colorScheme.primaryContainer.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Obx(
+                      () {
+                        var taskServiceCard = TaskWeddingCard(
+                          taskId: taskId,
+                          name: name,
+                          description: description,
+                          duedate: duedate,
+                          taskMasterName: taskMasterName,
+                          customerName: customerName,
+                          serviceNames: serviceNames,
+                          status: status,
+                          config: TaskServiceCardViewConfig(
+                            taskNameStyle:
+                                kTheme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: kTheme.colorScheme.primary,
+                            ),
+                            isShowDescription: false,
+                            isShowDueDate: controller
+                                .taskModel.data.value.status.isInProgress,
+                            isShowTag: false,
+                            isFilled: false,
+                          ),
+                        );
+                        return _TaskSection(
+                          taskId: taskId,
+                          taskServiceCard: taskServiceCard,
+                          heroTag: heroTag,
+                        );
+                      },
+                    ),
                   ),
-                  child: Obx(
+                  kGapH12,
+                  Obx(
                     () {
-                      var taskServiceCard = TaskServiceCard(
-                        taskId: taskId,
-                        name: name,
-                        description: description,
-                        duedate: duedate,
-                        taskMasterName: taskMasterName,
-                        serviceName: serviceName,
-                        config: TaskServiceCardViewConfig(
-                          isShowDueDate: controller
-                              .taskModel.data.value.status.isInProgress,
-                          isShowTag: false,
-                          isFilled: false,
+                      return StateRender<List<TaskWeddingModel>,
+                          TaskWeddingModel>(
+                        state: controller.taskModel.state.value,
+                        data: [controller.taskModel.data.value],
+                        layoutBuilder: (_, itemBuilder) => itemBuilder(
+                          controller.taskModel.data.value,
+                          0,
                         ),
-                      );
-                      return _TaskCard(
-                        taskId: taskId,
-                        taskServiceCard: taskServiceCard,
+                        itemBuilder: (item, _) => _DataView(item: item),
+                        isAnimation: true,
+                        duration: const Duration(milliseconds: 610),
+                        verticalSlideOffset: 0.0,
+                        horizontalSlideOffset: 50.0,
                       );
                     },
-                  ),
-                ),
-                kGapH12,
-                Obx(
-                  () {
-                    return StateRender<List<TaskWeddingModel>,
-                        TaskWeddingModel>(
-                      state: controller.taskModel.state.value,
-                      data: [controller.taskModel.data.value],
-                      layoutBuilder: (_, itemBuilder) => itemBuilder(
-                        controller.taskModel.data.value,
-                        0,
-                      ),
-                      itemBuilder: (item, _) => _DataView(item: item),
-                      isAnimation: true,
-                      duration: const Duration(milliseconds: 610),
-                      verticalSlideOffset: 0.0,
-                      horizontalSlideOffset: 50.0,
-                    );
-                  },
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         );
@@ -106,57 +136,79 @@ class _DataView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        const _ServiceTitle(),
+        const Divider(
+          height: 12,
+          indent: 8,
+          thickness: 5.0,
+          endIndent: 200,
+        ),
+        if (item.taskMaster != null) ...[
+          _ServiceTitle(item: item),
+          kGapH8,
+          _TaskMasterSection(item: item),
+        ] else
+          kGapH12,
+        kGapH4,
+        _TaskOrderDetailsSection(
+          item: item,
+        ),
         kGapH8,
-        _TaskMasterSection(item: item),
-        kGapH4,
-        _ServiceSection(item: item),
-        kGapH4,
-        _NoteSection(item: item),
-        kGapH16,
+        const Divider(
+          height: 16,
+          indent: 32,
+          thickness: 2.0,
+          endIndent: 32,
+        ),
+        kGapH8,
         _CustomerSection(item: item),
-        kGapH16,
-        _PartnerSection(item: item),
+        kGapH8,
+        if (item.status.isInProgress) ...[
+          const Divider(
+            height: 16,
+            indent: 32,
+            thickness: 2.0,
+            endIndent: 32,
+          ),
+          const _TaskNoteSection(),
+          kGapH16,
+          const Divider(
+            height: 16,
+            indent: 32,
+            thickness: 2.0,
+            endIndent: 32,
+          ),
+          _TaskReminderSection(item: item),
+          kGapH16,
+        ],
+        const Divider(),
+        _CommentSection(item: item),
       ],
     );
   }
 }
 
-class _ServiceTitle extends StatelessWidget {
-  const _ServiceTitle();
+class _TaskNoteSection extends StatelessWidget {
+  const _TaskNoteSection({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Thông tin chi tiết công việc',
-            style: kTheme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: kTheme.colorScheme.onBackground,
-            ),
-          ),
-        ],
-      ),
-    );
+    return const TaskNoteView();
   }
 }
 
-class _ServiceSection extends StatelessWidget {
-  const _ServiceSection({
+class _TaskReminderSection extends GetView<TaskDetailViewController> {
+  final TaskWeddingModel item;
+  const _TaskReminderSection({
+    super.key,
     required this.item,
   });
-
-  final TaskWeddingModel item;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
@@ -169,151 +221,165 @@ class _ServiceSection extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    FontAwesomeIcons.solidCircleCheck,
+                    FontAwesomeIcons.solidBell,
                     color: kTheme.colorScheme.primary,
-                    size: 18,
+                    size: 24,
                   ),
                   kGapW8,
                   Text(
-                    'Dịch vụ',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
+                    'Nhắc nhở công việc',
+                    style: kTheme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: kTheme.colorScheme.onBackground,
                     ),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Text(
-                    item.orderDetail.service.name,
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      color: kTheme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          kGapH12,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.solidCalendarCheck,
+              TextButton(
+                style: IconButton.styleFrom(
+                  minimumSize: const Size.square(28),
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(8),
+                ),
+                onPressed: controller.goToTaskReminder,
+                child: Text(
+                  'Xem thêm',
+                  style: kTheme.textTheme.bodyMedium?.copyWith(
                     color: kTheme.colorScheme.primary,
-                    size: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  kGapW8,
-                  Text(
-                    'Ngày diễn ra sự kiện',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                item.orderDetail.eventDate.toDateReadable(),
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  color: kTheme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          kGapH12,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.solidMoneyBill1,
-                    color: kTheme.colorScheme.primary,
-                    size: 18,
-                  ),
-                  kGapW8,
-                  Text(
-                    'Đơn giá',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
+          kGapH16,
+          Obx(
+            () {
+              switch (controller.events.state.value) {
+                case LoadingState.initial:
+                case LoadingState.loading:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                case LoadingState.success:
+                  return TaskReminderView.horizontalListCard(
+                    data: controller.events.data.value,
+                    onTap: (event, index) async {
+                      await Get.toNamed(
+                        RouteConstants.taskReminderRoute,
+                        arguments: {
+                          'taskModel': item,
+                          'selectedDate': event.eventAt,
+                        },
+                      );
+                      await controller.loadTaskEventReminderModel();
+                    },
+                  );
+                case LoadingState.error:
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Text('Có lỗi xảy ra, vui lòng thử lại sau.'),
                     ),
-                  ),
-                ],
-              ),
-              Text(
-                item.orderDetail.service.price.toInt().toVietNamCurrency(),
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  color: kTheme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+                  );
+                case LoadingState.empty:
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            FontAwesomeIcons.solidBellSlash,
+                            color: Colors.grey,
+                            size: 24,
+                          ),
+                          kGapH8,
+                          Text('Hôm nay không có nhắc nhở nào cả.'),
+                        ],
+                      ),
+                    ),
+                  );
+              }
+            },
           ),
-          kGapH12,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.format_list_numbered,
-                    color: kTheme.colorScheme.primary,
-                    size: 18,
-                  ),
-                  kGapW8,
-                  Text(
-                    'Số lượng',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '${item.orderDetail.quantity.toInt().numToReadableString()} (${item.orderDetail.service.unit})',
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  color: kTheme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ServiceTitle extends GetView<TaskDetailViewController> {
+  final TaskWeddingModel item;
+  const _ServiceTitle({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Chi tiết công việc',
+            style: kTheme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
           ),
-          kGapH12,
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.solidMoneyBill1,
-                    color: kTheme.colorScheme.primary,
+              if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.green.withOpacity(0.8),
+                    minimumSize: const Size.square(28),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  onPressed: () => controller.call(
+                    item.taskMaster?.phoneNumber ?? '',
+                  ),
+                  icon: Icon(
+                    Icons.phone,
+                    color: kTheme.colorScheme.onPrimary,
                     size: 18,
                   ),
-                  kGapW8,
-                  Text(
-                    'Thành tiền',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                item.orderDetail.price.toInt().toVietNamCurrency(),
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  color: kTheme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
+              if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.red.withOpacity(0.8),
+                    minimumSize: const Size.square(28),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  onPressed: () => controller.sendSms(
+                    item.taskMaster?.phoneNumber ?? '',
+                  ),
+                  icon: Icon(
+                    Icons.sms,
+                    color: kTheme.colorScheme.onPrimary,
+                    size: 18,
+                  ),
+                ),
+              if (item.taskMaster?.email.isNotEmpty ?? false)
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.blue.withOpacity(0.8),
+                    minimumSize: const Size.square(28),
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(8),
+                  ),
+                  onPressed: () => controller.sendEmail(
+                    item.taskMaster?.email ?? '',
+                  ),
+                  icon: Icon(
+                    Icons.email,
+                    color: kTheme.colorScheme.onPrimary,
+                    size: 18,
+                  ),
+                ),
             ],
           ),
         ],
@@ -360,12 +426,12 @@ class _TaskMasterSection extends StatelessWidget {
           Row(
             children: [
               CircleAvatarWithErrorHandler(
-                avatarUrl: item.taskMaster.avatar,
-                fullName: item.taskMaster.name,
+                avatarUrl: item.taskMaster?.avatar,
+                fullName: item.taskMaster?.name,
               ),
               kGapW8,
               Text(
-                item.taskMaster.name,
+                item.taskMaster?.name ?? 'Không có dữ liệu',
                 style: kTheme.textTheme.titleMedium?.copyWith(
                   color: kTheme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -379,8 +445,189 @@ class _TaskMasterSection extends StatelessWidget {
   }
 }
 
-class _NoteSection extends StatelessWidget {
-  const _NoteSection({
+class _TaskOrderDetailsSection extends StatelessWidget {
+  final TaskWeddingModel item;
+  const _TaskOrderDetailsSection({
+    super.key,
+    required this.item,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final count = item.orderDetails.length;
+    final isShowCount = count > 1;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.list,
+                color: kTheme.colorScheme.primary,
+                size: 18,
+              ),
+              kGapW8,
+              Text(
+                'Dịch vụ cần cung cấp ${isShowCount ? '($count)' : ''}',
+                style: kTheme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: kTheme.colorScheme.onBackground,
+                ),
+              ),
+            ],
+          ),
+        ),
+        kGapH12,
+        if (item.orderDetails.length == 1)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: SizedBox(
+              height: 200,
+              child: _OrderDetailCard(
+                taskOrderDetail: item.orderDetails.first,
+                index: 0,
+                isFullWidth: true,
+                isShowCount: false,
+              ),
+            ),
+          ),
+        if (item.orderDetails.length > 1)
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: item.orderDetails.length,
+              itemBuilder: (context, index) {
+                final taskOrderDetail = item.orderDetails[index];
+                return _OrderDetailCard(
+                  taskOrderDetail: taskOrderDetail,
+                  index: index,
+                );
+              },
+              separatorBuilder: (context, index) => kGapW8,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _OrderDetailCard extends GetView<TaskDetailViewController> {
+  const _OrderDetailCard({
+    super.key,
+    required this.taskOrderDetail,
+    required this.index,
+    this.isFullWidth = false,
+    this.isShowCount = true,
+  });
+
+  final TaskOrderDetailModel taskOrderDetail;
+  final int index;
+  final bool isFullWidth;
+  final bool isShowCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => controller.onTapOrderDetailCard(taskOrderDetail),
+      child: Container(
+        width: isFullWidth ? null : MediaQuery.of(context).size.width * 0.7,
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          border: Border.all(
+            color: kTheme.colorScheme.primary,
+            width: 1.0,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${isShowCount ? '${index + 1}.' : ''} ${taskOrderDetail.service.name} ',
+                    style: kTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+                  ),
+                ),
+                kGapW8,
+                CustomChip(
+                  title: taskOrderDetail.service.unit,
+                  color: kTheme.colorScheme.primary,
+                ),
+              ],
+            ),
+            kGapH8,
+            _RowServiceData(
+              icon: Icons.attach_money,
+              title: 'Giá cung cấp',
+              content: taskOrderDetail.price.toInt().toVietNamCurrency(),
+              contentColor: kTheme.colorScheme.primary,
+              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: kTheme.colorScheme.onBackground,
+              ),
+              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            kGapH8,
+            _RowServiceData(
+              icon: Icons.percent,
+              title: 'Chiết khấu',
+              content: '${taskOrderDetail.commission.toStringAsPrecision(2)} %',
+              contentColor: kTheme.colorScheme.primary,
+              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: kTheme.colorScheme.onBackground,
+              ),
+              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: kTheme.colorScheme.onBackground.withOpacity(0.5),
+              ),
+            ),
+            const Divider(),
+            _RowServiceData(
+              icon: Icons.attach_money,
+              title: 'Doanh thu dự kiến',
+              content: taskOrderDetail.revenue.toInt().toVietNamCurrency(),
+              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: kTheme.colorScheme.onBackground,
+              ),
+              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: kTheme.colorScheme.primary,
+              ),
+            ),
+            kGapH4,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                taskOrderDetail.description,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: kTheme.textTheme.bodySmall?.copyWith(
+                  color: kTheme.colorScheme.onBackground.withOpacity(0.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CommentSection extends StatelessWidget {
+  const _CommentSection({
     required this.item,
   });
 
@@ -399,63 +646,43 @@ class _NoteSection extends StatelessWidget {
           Row(
             children: [
               Icon(
-                FontAwesomeIcons.solidNoteSticky,
+                FontAwesomeIcons.solidCommentDots,
                 color: kTheme.colorScheme.primary,
-                size: 18,
+                size: 24,
               ),
               kGapW8,
               Text(
-                'Ghi chú',
-                style: kTheme.textTheme.titleMedium?.copyWith(
+                'Trao đổi công việc',
+                style: kTheme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: kTheme.colorScheme.onBackground,
                 ),
               ),
             ],
           ),
-          kGapH8,
-          Padding(
-            padding: const EdgeInsets.only(left: 18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: item.notes
-                  .map(
-                    (e) => Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '- $e',
-                            style: kTheme.textTheme.bodyLarge?.copyWith(
-                              color: kTheme.colorScheme.onBackground,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+          kGapH16,
+          CommentTaskView(taskId: item.id),
         ],
       ),
     );
   }
 }
 
-class _TaskCard extends StatelessWidget {
-  const _TaskCard({
+class _TaskSection extends StatelessWidget {
+  const _TaskSection({
     required this.taskId,
     required this.taskServiceCard,
+    this.heroTag,
   });
 
   final dynamic taskId;
-  final TaskServiceCard taskServiceCard;
+  final TaskWeddingCard taskServiceCard;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: 'TaskServiceCard_$taskId',
+      tag: heroTag ?? const Uuid().v4(),
       flightShuttleBuilder: (
         context,
         animation,
@@ -489,64 +716,153 @@ class _CustomerSection extends GetView<TaskDetailViewController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  FontAwesomeIcons.userGroup,
-                  color: kTheme.colorScheme.primary,
-                  size: 18,
-                ),
-                kGapW12,
                 Text(
                   'Thông tin khách hàng',
-                  style: kTheme.textTheme.titleMedium?.copyWith(
+                  style: kTheme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: kTheme.colorScheme.onBackground,
                   ),
                 ),
+                Row(
+                  children: [
+                    if (item.customer.phoneNumber.isNotEmpty)
+                      IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.green.withOpacity(0.8),
+                          minimumSize: const Size.square(28),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        onPressed: () => controller.call(
+                          item.customer.phoneNumber,
+                        ),
+                        icon: Icon(
+                          Icons.phone,
+                          color: kTheme.colorScheme.onPrimary,
+                          size: 18,
+                        ),
+                      ),
+                    if (item.customer.phoneNumber.isNotEmpty)
+                      IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.red.withOpacity(0.8),
+                          minimumSize: const Size.square(28),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        onPressed: () => controller.sendSms(
+                          item.customer.phoneNumber,
+                        ),
+                        icon: Icon(
+                          Icons.sms,
+                          color: kTheme.colorScheme.onPrimary,
+                          size: 18,
+                        ),
+                      ),
+                    if (item.customer.email.isNotEmpty)
+                      IconButton.filledTonal(
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.blue.withOpacity(0.8),
+                          minimumSize: const Size.square(28),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(8),
+                        ),
+                        onPressed: () => controller.sendEmail(
+                          item.customer.email,
+                        ),
+                        icon: Icon(
+                          Icons.email,
+                          color: kTheme.colorScheme.onPrimary,
+                          size: 18,
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
             kGapH16,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Flexible(
-                  child: CircleAvatarWithErrorHandler(
-                    avatarUrl: item.orderDetail.customer.avatar,
-                    radius: 42,
-                    fullName: item.orderDetail.customer.fullName,
-                  ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                  color: kTheme.colorScheme.primary,
+                  width: 1.0,
                 ),
-                kGapW12,
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _RowData(
-                        icon: Icons.person,
-                        title: item.orderDetail.customer.fullName,
-                      ),
-                      kGapH4,
-                      _RowData(
-                        icon: Icons.phone,
-                        title: item.orderDetail.customer.phoneNumber,
-                      ),
-                      kGapH4,
-                      _RowData(
-                        icon: Icons.email,
-                        title: item.orderDetail.customer.email,
-                      ),
-                      kGapH4,
-                      _RowData(
-                        icon: Icons.location_on,
-                        title: item.orderDetail.customer.address,
-                      ),
-                    ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.user,
+                                  color: kTheme.colorScheme.primary,
+                                  size: 18,
+                                ),
+                                kGapW8,
+                                Text(
+                                  'Họ và tên',
+                                  style: kTheme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: kTheme.colorScheme.onBackground,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                CircleAvatarWithErrorHandler(
+                                  avatarUrl: item.customer.avatar,
+                                  fullName: item.customer.fullName,
+                                ),
+                                kGapW8,
+                                Text(
+                                  item.customer.fullName,
+                                  style: kTheme.textTheme.titleSmall?.copyWith(
+                                    color: kTheme.colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        kGapH8,
+                        _RowServiceData(
+                          icon: Icons.phone,
+                          title: 'Số điện thoại',
+                          content: item.customer.phoneNumber,
+                        ),
+                        kGapH8,
+                        _RowServiceData(
+                          icon: Icons.email,
+                          title: 'Email',
+                          content: item.customer.email,
+                        ),
+                        kGapH8,
+                        _RowServiceData(
+                          icon: Icons.location_on,
+                          title: 'Địa chỉ',
+                          content: item.customer.address,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -555,116 +871,53 @@ class _CustomerSection extends GetView<TaskDetailViewController> {
   }
 }
 
-class _PartnerSection extends StatelessWidget {
-  final TaskWeddingModel item;
-  const _PartnerSection({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                FontAwesomeIcons.handshake,
-                color: kTheme.colorScheme.primary,
-                size: 24,
-              ),
-              kGapW12,
-              Text(
-                'Thông tin đối tác',
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: kTheme.colorScheme.onBackground,
-                ),
-              ),
-            ],
-          ),
-          kGapH16,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                child: SizedBox(
-                  height: 80,
-                  child: CircleAvatarWithErrorHandler(
-                    avatarUrl: item.orderDetail.partner.avatar,
-                    fullName: item.orderDetail.partner.fullName,
-                    radius: 48,
-                  ),
-                ),
-              ),
-              kGapW12,
-              Flexible(
-                flex: 2,
-                child: Column(
-                  children: [
-                    _RowData(
-                      icon: Icons.person,
-                      title: item.orderDetail.partner.fullName,
-                    ),
-                    kGapH4,
-                    _RowData(
-                      icon: Icons.phone,
-                      title: item.orderDetail.partner.phoneNumber,
-                    ),
-                    kGapH4,
-                    _RowData(
-                      icon: Icons.email,
-                      title: item.orderDetail.partner.email,
-                    ),
-                    kGapH4,
-                    _RowData(
-                      icon: Icons.location_on,
-                      title: item.orderDetail.partner.address,
-                    ),
-                    kGapH4,
-                    _RowData(
-                      icon: Icons.business,
-                      title: item.orderDetail.partner.business.name,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RowData extends StatelessWidget {
-  const _RowData({
+class _RowServiceData extends StatelessWidget {
+  const _RowServiceData({
+    super.key,
     required this.icon,
     required this.title,
+    required this.content,
+    this.contentColor,
+    this.titleStyle,
+    this.contentStyle,
   });
-
   final IconData icon;
   final String title;
+  final String content;
+  final Color? contentColor;
+  final TextStyle? titleStyle;
+  final TextStyle? contentStyle;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(
-          icon,
-          color: kTheme.colorScheme.primary,
-          size: 20,
-        ),
-        kGapW8,
-        Flexible(
-          child: Text(
-            title,
-            style: kTheme.textTheme.bodyLarge?.copyWith(
-              color: kTheme.colorScheme.onBackground,
+        Row(
+          children: [
+            Icon(
+              icon,
+              color: kTheme.colorScheme.primary,
+              size: 18,
             ),
-          ),
+            kGapW8,
+            Text(
+              title,
+              style: titleStyle ??
+                  kTheme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: kTheme.colorScheme.onBackground,
+                  ),
+            ),
+          ],
+        ),
+        Text(
+          content,
+          style: contentStyle ??
+              kTheme.textTheme.titleSmall?.copyWith(
+                color: contentColor ?? kTheme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
         ),
       ],
     );

@@ -1,8 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
+import 'package:task_management_module/src/domain/models/task_comment.dart';
+import 'package:uuid/v4.dart';
 
 import 'evidence.dart';
+import 'task_customer.dart';
 import 'task_order_detail.dart';
 
 class BaseTaskModel {
@@ -11,9 +14,9 @@ class BaseTaskModel {
   final String description;
   final DateTime createdDate;
   final DateTime duedate;
-  final TaskMasterModel taskMaster;
+  final TaskMasterModel? taskMaster;
   final TaskProgressEnum status;
-  final List<String> notes;
+  final List<TaskCommentModel> comments;
 
   BaseTaskModel({
     required this.id,
@@ -23,7 +26,7 @@ class BaseTaskModel {
     required this.duedate,
     required this.taskMaster,
     required this.status,
-    required this.notes,
+    required this.comments,
   });
 }
 
@@ -31,12 +34,16 @@ class TaskMasterModel {
   final dynamic id;
   final String avatar;
   final String name;
+  final String phoneNumber;
+  final String email;
   final String? description;
   final Map<String, dynamic>? refData;
   TaskMasterModel({
     required this.id,
     required this.name,
     required this.avatar,
+    required this.phoneNumber,
+    required this.email,
     this.description,
     this.refData,
   });
@@ -46,6 +53,8 @@ class TaskMasterModel {
       id: -1,
       name: 'Đang tải...',
       avatar: 'Đang tải...',
+      phoneNumber: 'Đang tải...',
+      email: 'Đang tải...',
     );
   }
 
@@ -54,12 +63,15 @@ class TaskMasterModel {
       id: -1,
       name: 'Không có dữ liệu',
       avatar: 'Không có dữ liệu',
+      phoneNumber: 'Không có dữ liệu',
+      email: 'Không có dữ liệu',
     );
   }
 }
 
 class TaskWeddingModel extends BaseTaskModel {
-  final TaskOrderDetailModel orderDetail;
+  final List<TaskOrderDetailModel> orderDetails;
+  final TaskCustomerModel customer;
   final EvidenceModel? evidence;
 
   TaskWeddingModel({
@@ -70,40 +82,39 @@ class TaskWeddingModel extends BaseTaskModel {
     required super.duedate,
     required super.taskMaster,
     required super.status,
-    required super.notes,
-    required this.orderDetail,
+    required super.comments,
+    required this.orderDetails,
+    required this.customer,
     this.evidence,
   });
 
   factory TaskWeddingModel.loading() {
     return TaskWeddingModel(
-      id: -1,
+      id: const UuidV4().generate(),
       name: 'Đang tải...',
       description: 'Đang tải...',
       createdDate: DateTime.now(),
       duedate: DateTime.now(),
       taskMaster: TaskMasterModel.loading(),
       status: TaskProgressEnum.toDo,
-      notes: [
-        'Đang tải...',
-        'Đang tải...',
-        'Đang tải...',
-      ],
-      orderDetail: TaskOrderDetailModel.loading(),
+      comments: TaskCommentModel.loadings(),
+      orderDetails: TaskOrderDetailModel.loadings(),
+      customer: TaskCustomerModel.loading(),
     );
   }
 
   factory TaskWeddingModel.error() {
     return TaskWeddingModel(
-      id: -1,
+      id: const UuidV4().generate(),
       name: 'Lỗi',
       description: 'Không có dữ liệu',
       createdDate: DateTime.now(),
       duedate: DateTime.now(),
       taskMaster: TaskMasterModel.error(),
       status: TaskProgressEnum.toDo,
-      notes: [],
-      orderDetail: TaskOrderDetailModel.error(),
+      comments: TaskCommentModel.errors(),
+      orderDetails: TaskOrderDetailModel.errors(),
+      customer: TaskCustomerModel.error(),
     );
   }
 

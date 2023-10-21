@@ -6,7 +6,7 @@ import '../../../core/core.dart';
 import '../shared/animated_size_wrapper.dart';
 
 class CustomTextField extends StatefulWidget {
-  final String labelText;
+  final String? labelText;
   final IconData? prefixIcon;
   final Function(String)? onChanged;
   final String? errorText;
@@ -26,10 +26,11 @@ class CustomTextField extends StatefulWidget {
   final bool obscureText;
   final Function(String)? onSubmitted;
   final Function()? onTap;
+  final bool borderTransparent;
 
   const CustomTextField({
     Key? key,
-    required this.labelText,
+    this.labelText,
     this.prefixIcon,
     this.onChanged,
     this.errorText,
@@ -49,6 +50,7 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.onSubmitted,
     this.onTap,
+    this.borderTransparent = false,
   }) : super(key: key);
 
   @override
@@ -84,10 +86,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(
-                  width: .1,
-                  color: kTheme.colorScheme.primary.withOpacity(0.1),
-                ),
+                borderSide: !widget.borderTransparent
+                    ? BorderSide(
+                        width: .1,
+                        color: kTheme.colorScheme.primary.withOpacity(0.1),
+                      )
+                    : BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
@@ -103,7 +107,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 color: kTheme.colorScheme.onBackground.withOpacity(0.5),
               ),
               filled: true,
-              fillColor: kTheme.colorScheme.primaryContainer.withOpacity(.3),
               isDense: widget.isDense,
               prefixIcon: widget.prefixIcon != null && widget.maxLines == 1
                   ? Icon(

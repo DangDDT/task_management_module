@@ -11,7 +11,8 @@ typedef LayoutBuilder<T extends List<E>, E> = Widget Function(
   _Item<T, E> Function(
     E item,
     int index,
-  ) itemBuilder,
+  )
+      itemBuilder,
 );
 
 typedef ItemBuilder<E> = Widget Function(
@@ -30,6 +31,7 @@ class StateRender<T extends List<E>, E> extends StatelessWidget {
     this.verticalSlideOffset = 50.0,
     this.horizontalSlideOffset = 50.0,
     this.duration = const Duration(milliseconds: 410),
+    this.emptyBuilder,
   });
 
   final LoadingState state;
@@ -40,6 +42,7 @@ class StateRender<T extends List<E>, E> extends StatelessWidget {
   final double verticalSlideOffset;
   final double horizontalSlideOffset;
   final Duration duration;
+  final Widget? emptyBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,13 @@ class StateRender<T extends List<E>, E> extends StatelessWidget {
           duration: duration,
         );
       case LoadingState.empty:
+        return emptyBuilder ??
+            const SizedBox(
+              height: 100,
+              child: Center(
+                child: Text('Hiện không có dữ liệu nào'),
+              ),
+            );
       case LoadingState.error:
         return _ErrorView<T, E>(
           itemBuilder: itemBuilder,

@@ -23,7 +23,10 @@ class TaskDetailPage extends GetView<TaskDetailController> {
         description: controller.description,
         duedate: controller.duedate,
         taskMasterName: controller.taskMasterName,
-        serviceName: controller.serviceName,
+        serviceNames: controller.serviceNames,
+        customerName: controller.customerName,
+        heroTag: controller.heroTag,
+        status: controller.status,
       ),
       persistentFooterAlignment: AlignmentDirectional.topCenter,
       persistentFooterButtons: [
@@ -31,35 +34,33 @@ class TaskDetailPage extends GetView<TaskDetailController> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text.rich(
-              TextSpan(
-                text: 'Trạng thái: ',
-                children: [
-                  TextSpan(
-                    text: controller.status?.name ?? 'Không có dữ liệu',
-                    style: kTheme.textTheme.bodyLarge?.copyWith(
-                      color: controller.status?.color,
-                      fontWeight: FontWeight.bold,
+            Obx(
+              () => Text.rich(
+                TextSpan(
+                  text: 'Trạng thái: ',
+                  children: [
+                    TextSpan(
+                      text: controller.statusRx.value.name,
+                      style: kTheme.textTheme.bodyLarge?.copyWith(
+                        color: controller.statusRx.value.color,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-            Builder(builder: (context) {
-              switch (controller.status) {
+            Obx(() {
+              switch (controller.statusRx.value) {
                 case TaskProgressEnum.toDo:
                   return _EditProgressButton(
                     label: 'Bắt đầu công việc',
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: controller.onStartTask,
                   );
                 case TaskProgressEnum.inProgress:
                   return _EditProgressButton(
                     label: 'Hoàn thành công việc',
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: controller.onCompleteTask,
                   );
                 case TaskProgressEnum.done:
                   return const SizedBox(width: 0);

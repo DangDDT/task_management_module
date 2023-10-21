@@ -88,7 +88,7 @@ extension DateTimeExt on DateTime {
   }
 
   String toFullString() {
-    return '${DateFormat.Hm().format(this)} ${DateFormat('dd/MM/yyyy').format(this)}';
+    return '${DateFormat.Hm().format(this)}, ngày ${DateFormat('dd/MM/yyyy').format(this)}';
   }
 
   String toDate() {
@@ -179,5 +179,17 @@ extension DateTimeExt on DateTime {
       millisecond ?? this.millisecond,
       microsecond ?? this.microsecond,
     );
+  }
+
+  DateTime get floorDate {
+    return DateTime(year, month, day).add(const Duration(days: 1));
+  }
+
+  DateTime get ceilDate {
+    return DateTime(year, month, day).subtract(const Duration(days: 1));
+  }
+
+  bool isBetween(DateTime start, DateTime end) {
+    return isAfter(start) && isBefore(end);
   }
 }

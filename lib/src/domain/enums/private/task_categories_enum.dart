@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:task_management_module/core/core.dart';
 
 enum TaskProgressEnum {
   all('Tất cả'),
@@ -16,6 +17,19 @@ enum TaskProgressEnum {
   bool get isInProgress => this == TaskProgressEnum.inProgress;
 
   bool get isDone => this == TaskProgressEnum.done;
+
+  String toCode() {
+    switch (this) {
+      case TaskProgressEnum.toDo:
+        return 'TO_DO';
+      case TaskProgressEnum.inProgress:
+        return 'IN_PROGRESS';
+      case TaskProgressEnum.done:
+        return 'DONE';
+      default:
+        return '';
+    }
+  }
 
   static TaskProgressEnum fromCode(String code) {
     switch (code) {
@@ -36,11 +50,39 @@ enum TaskProgressEnum {
       case TaskProgressEnum.toDo:
         return Colors.grey;
       case TaskProgressEnum.inProgress:
-        return kTheme.colorScheme.primary;
+        return Colors.orange;
       case TaskProgressEnum.done:
         return Colors.green;
       default:
         return Colors.white;
     }
   }
+
+  IconData get icon {
+    switch (this) {
+      case TaskProgressEnum.toDo:
+        return Icons.new_releases;
+      case TaskProgressEnum.inProgress:
+        return Icons.accessibility_new;
+      case TaskProgressEnum.done:
+        return Icons.check;
+      default:
+        return Icons.new_releases;
+    }
+  }
+
+  static get mockRandom {
+    final listForRandom = [
+      TaskProgressEnum.toDo,
+      TaskProgressEnum.inProgress,
+      TaskProgressEnum.done,
+    ];
+    final random = Random();
+    final index = random.nextInt(listForRandom.length);
+    return listForRandom[index];
+  }
+}
+
+extension ListTaskProgressEnum on List<TaskProgressEnum> {
+  List<String> get codes => map((e) => e.toCode()).toList();
 }

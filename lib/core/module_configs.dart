@@ -7,6 +7,7 @@ class ModuleConfig {
   ModuleConfig({
     this.isShowLog = false,
     required this.baseUrlConfig,
+    this.onCreateLocalNotificationCallback,
   })  : _userConfig = null,
         _authConfig = null;
 
@@ -44,6 +45,8 @@ class ModuleConfig {
   // }
 
   // set setModuleRole(ModuleRole? moduleRole) => _moduleRole = moduleRole;
+
+  OnCreateLocalNotifyCallback? onCreateLocalNotificationCallback;
 }
 
 class BaseUrlConfig {
@@ -56,8 +59,12 @@ class BaseUrlConfig {
 
 class UserConfig {
   final dynamic userId;
+  final String fullName;
+  final String avatar;
   const UserConfig({
     required this.userId,
+    required this.fullName,
+    required this.avatar,
   });
 }
 
@@ -83,3 +90,9 @@ class AuthConfig {
 typedef OnGetTokenCallback = Future<String?> Function();
 typedef OnRefreshTokenCallback = Future<String?> Function();
 typedef OnUnauthorizedCallback = Future<void> Function();
+typedef OnCreateLocalNotifyCallback = Future<void> Function(
+  int id,
+  String title,
+  String body,
+  DateTime at,
+);

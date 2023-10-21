@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class ExpansionText extends StatefulWidget {
   const ExpansionText(
     this.text, {
+    super.key,
     this.collapsedLength = 200,
     this.collapsedMaxLines = 4,
     this.style,
@@ -131,7 +132,8 @@ class _ExpansionTextState extends State<ExpansionText> {
           ),
         ),
       ),
-      crossFadeState: isCollapsed ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      crossFadeState:
+          isCollapsed ? CrossFadeState.showFirst : CrossFadeState.showSecond,
     );
   }
 }

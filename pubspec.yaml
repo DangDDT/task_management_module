@@ -2,6 +2,7 @@ name: task_management_module
 description: A new Flutter package project.
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: ">=3.0.6 <4.0.0"
@@ -33,6 +34,16 @@ dependencies:
   flutter_staggered_grid_view: ^0.7.0
   expandable_page_view: ^1.0.17
   carousel_slider: ^4.2.1
+  infinite_scroll_pagination: ^4.0.0
+  uuid: ^4.0.0
+  url_launcher: ^6.1.14
+  table_calendar: ^3.0.9
+  add_2_calendar: ^2.2.4
+  image_preview: ^1.0.4
+
+  core_picker:
+    path: ../picker_package
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -41,15 +52,17 @@ dev_dependencies:
   assets_gen: ^1.5.0
   build_runner: ^2.4.6
   retrofit_generator: ^7.0.8
+dependency_overrides:
+  http: ^0.13.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
-  assets:
-    - assets/
-    - assets/images/
+# flutter:
+#   assets:
+#     - assets/
+#     - assets/images/
 
 assets_gen:
   output: core/gens/assets.dart

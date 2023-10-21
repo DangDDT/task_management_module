@@ -5,7 +5,6 @@ export 'constants/server_timeout_constants.dart';
 export 'constants/server_url_constants.dart';
 export 'constants/ui_constant.dart';
 export 'task_management_module.dart';
-export 'gens/assets.dart';
 export 'global_binding.dart';
 export 'interceptors/log_interceptor.dart';
 export 'interceptors/refresh_token_interceptor.dart';

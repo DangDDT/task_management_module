@@ -37,13 +37,13 @@ class StateModel<T> {
   }
 
   void error(String message, {T? errorData}) {
-    if (errorData != null) data.value = errorData;
+    if (errorData != null) this.data.value = errorData;
     errorMessage.value = message;
     state.value = LoadingState.error;
   }
 
   void empty({T? emptyData}) {
-    if (emptyData != null) data.value = emptyData;
+    if (emptyData != null) this.data.value = emptyData;
     state.value = LoadingState.empty;
   }
 }

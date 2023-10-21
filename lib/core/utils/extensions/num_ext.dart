@@ -34,7 +34,7 @@ extension IntNullExt on int? {
   }
 
   String? toStringNotNull() {
-    return this == null ? null : this.toString();
+    return this == null ? null : toString();
   }
 
   /// Convert number to vietnamese word by recursively divide number into 3 digits
@@ -70,7 +70,7 @@ extension IntNullExt on int? {
   }
 
   String toVietnameseCurrency() {
-    return this.toVietnameseWords() + ' đồng';
+    return '${toVietnameseWords()} đồng';
   }
 }
 

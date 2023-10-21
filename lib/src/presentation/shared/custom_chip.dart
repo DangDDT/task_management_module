@@ -80,7 +80,7 @@ class _CustomChipState extends State<CustomChip> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (widget.icon != null) widget.icon!,
-            if (widget.icon != null) const SizedBox(width: 8),
+            if (widget.icon != null) const SizedBox(width: 4),
             Flexible(
               child: DefaultTextStyle(
                 style: theme.textTheme.bodyMedium!.copyWith(

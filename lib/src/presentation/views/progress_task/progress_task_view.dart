@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/src/domain/models/task_progress_model.dart';
-import 'package:task_management_module/src/presentation/views/progress_task/progress_task_controller.dart';
 
 import '../../widgets/state_render.dart';
 
 class ProgressTaskView extends StatelessWidget {
-  const ProgressTaskView({super.key});
+  final ProgressTaskController? controller;
+  const ProgressTaskView({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProgressTaskController>(
-      init: ProgressTaskController(),
+      init: controller ?? ProgressTaskController(),
       builder: (controller) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

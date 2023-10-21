@@ -19,12 +19,14 @@ class TaskManagementModule {
     bool isShowLog = false,
     required BaseUrlConfig baseUrlConfig,
     AuthConfig? authConfig,
+    OnCreateLocalNotifyCallback? onCreateLocalNotificationCallback,
   }) async {
     await IsarDatabase.init();
+
     await GlobalBinding.setUpLocator(
-      isShowLog: isShowLog,
-      baseUrlConfig: baseUrlConfig,
-    );
+        isShowLog: isShowLog,
+        baseUrlConfig: baseUrlConfig,
+        onCreateLocalNotificationCallback: onCreateLocalNotificationCallback);
     _isInitialized = true;
   }
 
