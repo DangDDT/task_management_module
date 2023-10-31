@@ -36,4 +36,9 @@ class TaskCustomerModel {
       address: 'Không có dữ liệu',
     );
   }
+
+  @override
+  String toString() {
+    return 'TaskCustomerModel(id: $id, fullName: $fullName, avatar: $avatar, email: $email, phoneNumber: $phoneNumber, address: $address)';
+  }
 }

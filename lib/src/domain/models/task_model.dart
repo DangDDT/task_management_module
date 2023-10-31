@@ -125,4 +125,9 @@ class TaskWeddingModel extends BaseTaskModel {
   static List<TaskWeddingModel> errorList<A, E>() {
     return List.generate(3, (index) => TaskWeddingModel.error());
   }
+
+  @override
+  String toString() {
+    return 'TaskWeddingModel(id: $id, name: $name, description: $description, createdDate: $createdDate, duedate: $duedate, taskMaster: $taskMaster, status: $status, comments: $comments, orderDetails: $orderDetails, customer: $customer, evidence: $evidence)';
+  }
 }

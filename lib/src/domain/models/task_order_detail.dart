@@ -57,4 +57,9 @@ class TaskOrderDetailModel {
   static List<TaskOrderDetailModel> errors() {
     return List.generate(3, (index) => TaskOrderDetailModel.error());
   }
+
+  @override
+  String toString() {
+    return 'TaskOrderDetailModel(service: $service, quantity: $quantity, price: $price, eventDate: $eventDate, commission: $commission, description: $description)';
+  }
 }

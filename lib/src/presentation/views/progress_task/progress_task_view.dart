@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
+import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/task_progress_model.dart';
+import 'package:task_management_module/src/presentation/views/list_task/list_task_view_controller.dart';
 
 import '../../widgets/state_render.dart';
 
@@ -17,12 +19,33 @@ class ProgressTaskView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                'Thống kê tiến độ công việc',
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              title: Text(
+                'Tiến độ công việc',
                 style: kTheme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+              trailing: TextButton(
+                onPressed: () async {
+                  await Get.to(
+                    () => ListTaskView.toPage(
+                      initialTabType: ListTaskTab.all(),
+                      config: const ListTaskViewConfig(
+                        isShowFilterButton: true,
+                        isShowTabBar: true,
+                      ),
+                      title: 'Quản lý công việc',
+                    ),
+                  );
+                },
+                child: Text(
+                  'Quản lý công việc >>',
+                  style: kTheme.textTheme.titleMedium?.copyWith(
+                    color: kTheme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -65,7 +88,7 @@ class _ProgressCardGridView extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: data.length,
         itemBuilder: (context, index) => SizedBox(
-          width: (MediaQuery.of(context).size.width - kPadding * 2) / 3,
+          width: (MediaQuery.of(context).size.width - (kPadding * 2)) / 3,
           child: itemBuilder(data[index], index),
         ),
       ),
@@ -79,38 +102,70 @@ class _TaskProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: item.color.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FittedBox(
-              child: Text(
-                item.name,
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  color: item.color,
+    return GestureDetector(
+      onTap: () async {
+        final ListTaskTab tabType;
+        final String title;
+        switch (item.type) {
+          case TaskProgressEnum.toDo:
+            tabType = ListTaskTab.toDo();
+            title = 'Công việc chưa thực hiện';
+            break;
+          case TaskProgressEnum.inProgress:
+            tabType = ListTaskTab.inProgress();
+            title = 'Công việc đang thực hiện';
+            break;
+          case TaskProgressEnum.done:
+            tabType = ListTaskTab.done();
+            title = 'Công việc đã hoàn thành';
+            break;
+          default:
+            return;
+        }
+        await Get.to(
+          () => ListTaskView.toPage(
+            initialTabType: tabType,
+            config: const ListTaskViewConfig(
+              isShowFilterButton: false,
+              isShowTabBar: false,
+            ),
+            title: title,
+          ),
+        );
+      },
+      child: Card(
+        elevation: 0,
+        color: item.color.withOpacity(0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FittedBox(
+                child: Text(
+                  item.name,
+                  style: kTheme.textTheme.titleMedium?.copyWith(
+                    color: item.color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Text(
+                item.value.numToReadableString(),
+                style: kTheme.textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            Text(
-              item.value.numToReadableString(),
-              style: kTheme.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.bold,
+              Text(
+                '(công việc)',
+                style: kTheme.textTheme.bodySmall,
               ),
-            ),
-            Text(
-              '(công việc)',
-              style: kTheme.textTheme.bodySmall,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

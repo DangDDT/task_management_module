@@ -14,6 +14,12 @@ import 'widgets/filter_task_bottom_sheet.dart';
 
 class ListTaskViewController extends GetxController
     with GetSingleTickerProviderStateMixin {
+  final ListTaskTab? initialTabType;
+
+  ListTaskViewController({
+    this.initialTabType,
+  });
+
   ///Constants
   static const _pageSize = 20;
   final List<TaskProgressEnum> taskWillShowActions = [
@@ -39,7 +45,8 @@ class ListTaskViewController extends GetxController
   ///States
   final Rx<int> currentPage = 0.obs;
   final Rx<String> searchText = ''.obs;
-  final Rx<ListTaskTab> selectedTab = ListTaskTab.all().obs;
+  late final Rx<ListTaskTab> selectedTab =
+      initialTabType != null ? initialTabType!.obs : ListTaskTab.all().obs;
 
   final Rxn<FilterTask> filter = Rxn<FilterTask>();
 

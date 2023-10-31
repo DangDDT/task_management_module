@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -10,32 +11,81 @@ import 'package:uuid/uuid.dart';
 
 import '../../widgets/task_wedding_card.dart';
 
-class ListTaskView extends StatelessWidget {
-  const ListTaskView({super.key});
+class ListTaskViewConfig {
+  final bool isShowFilterButton;
+  final bool isShowTabBar;
+  const ListTaskViewConfig({
+    this.isShowFilterButton = true,
+    this.isShowTabBar = true,
+  });
+}
+
+class ListTaskView extends StatefulWidget {
+  final ListTaskViewConfig config;
+  final ListTaskTab? initialTabType;
+  const ListTaskView({
+    super.key,
+    this.config = const ListTaskViewConfig(),
+    this.initialTabType,
+  });
+
+  static Widget toPage({
+    String title = 'Danh sách công việc',
+    required ListTaskTab initialTabType,
+    ListTaskViewConfig config = const ListTaskViewConfig(),
+  }) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: ListTaskView(
+        config: config,
+        initialTabType: initialTabType,
+      ),
+    );
+  }
+
+  @override
+  State<ListTaskView> createState() => _ListTaskViewState();
+}
+
+class _ListTaskViewState extends State<ListTaskView> {
+  @override
+  void initState() {
+    Get.put(ListTaskViewController(
+      initialTabType: widget.initialTabType,
+    ));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ListTaskViewController>(
-      init: ListTaskViewController(),
+      init: Get.find<ListTaskViewController>(),
       builder: (_) {
-        return const Padding(
-          padding: EdgeInsets.all(8.0),
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: Row(
                   children: [
-                    Expanded(child: _TaskSearchField()),
-                    kGapW8,
-                    _TaskFilterButton(),
+                    const Expanded(child: _TaskSearchField()),
+                    if (widget.config.isShowFilterButton) ...[
+                      kGapW8,
+                      const _TaskFilterButton(),
+                    ]
                   ],
                 ),
               ),
-              _TaskTabBar(),
-              kGapH12,
-              Expanded(child: _TaskListBuilder())
+              if (widget.config.isShowTabBar) ...[
+                kGapH12,
+                const _TaskTabBar(),
+              ],
+              kGapH8,
+              const Expanded(child: _TaskListBuilder())
             ],
           ),
         );
