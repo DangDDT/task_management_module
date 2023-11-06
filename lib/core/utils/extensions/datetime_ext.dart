@@ -12,6 +12,10 @@ extension DateTimeExt on DateTime {
 
   String toReadable() => DateFormat('dd/MM/yyyy').format(this);
 
+  DateTime firstTimeOfDate() => DateTime(year, month, day);
+
+  DateTime lastTimeOfDate() => DateTime(year, month, day, 23, 59, 59);
+
   String toReadableDueDateWithHourString() {
     final toDayWithTime = DateTime.now();
     final toDay = DateTime(

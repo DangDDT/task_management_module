@@ -1264,6 +1264,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  wss_repository:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "7b1ed7e16946449d7d3e96e6f446a3823d03a5ad"
+      url: "https://github.com/DangDDT/wss_repository.git"
+    source: git
+    version: "0.0.1"
   xdg_directories:
     dependency: transitive
     description:

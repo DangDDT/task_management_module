@@ -1,14 +1,16 @@
 // ignore_for_file: unnecessary_overrides
 
-import 'package:faker/faker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
+import 'package:task_management_module/src/domain/requests/get_task_wedding_param.dart';
+import 'package:task_management_module/src/domain/requests/put_status_task_body.dart';
+import 'package:task_management_module/src/domain/services/task_service.dart';
+import 'package:task_management_module/src/presentation/shared/toast.dart';
 
 import '../../../../core/utils/helpers/logger.dart';
-import '../../../domain/mock/dummy.dart';
 import '../../../domain/models/task_model.dart';
-import '../../../domain/requests/get_task_list_param.dart';
 import '../../global/module_controller.dart';
 import '../../view_models/state_model.dart';
 
@@ -16,6 +18,9 @@ class TaskAlmostDueController extends GetxController {
   ///Controllers
   final moduleController =
       Get.find<ModuleController>(tag: ModuleController.tag);
+
+  ///Services
+  final _taskService = Get.find<ITaskService>();
 
   ///States
   final StateModel<List<TaskWeddingModel>> taskModels = StateModel(
@@ -31,24 +36,35 @@ class TaskAlmostDueController extends GetxController {
   Future<void> loadTaskProgressData() async {
     taskModels.loading(loadingData: TaskWeddingModel.loadingList());
     try {
-      await Future.delayed(
-        Duration(seconds: faker.randomGenerator.integer(5)),
-        () {
-          final data = Dummy.getDummyTasks(
-            GetTaskListParam(
-              pageSize: 9999,
-              pageIndex: 0,
-              duedateFrom: DateTime.now(),
-              duedateTo: DateTime.now().add(const Duration(days: 3)),
-              taskStatusCodes: [
-                TaskProgressEnum.toDo.toCode(),
-                TaskProgressEnum.inProgress.toCode(),
-              ],
-            ),
-          );
-          taskModels.success(data);
-        },
+      final data = await _taskService.getTaskWeddings(
+        GetTaskWeddingParam(
+          pageSize: null,
+          pageIndex: null,
+          dueDateFrom: DateTime.now().firstTimeOfDate(),
+          dueDateTo:
+              DateTime.now().add(const Duration(days: 7)).lastTimeOfDate(),
+          orderBy: null,
+          orderType: null,
+          taskName: null,
+          status: [
+            TaskProgressEnum.toDo.toCode(),
+            TaskProgressEnum.inProgress.toCode(),
+          ],
+        ),
       );
+      // Dummy.getDummyTasks(
+      //   GetTaskListParam(
+      //     pageSize: 9999,
+      //     pageIndex: 0,
+      //     duedateFrom: DateTime.now(),
+      //     duedateTo: DateTime.now().add(const Duration(days: 3)),
+      //     taskStatusCodes: [
+      //       TaskProgressEnum.toDo.toCode(),
+      //       TaskProgressEnum.inProgress.toCode(),
+      //     ],
+      //   ),
+      // );
+      taskModels.success(data);
     } catch (e, stackTrace) {
       taskModels.error(
         e.toString(),
@@ -77,5 +93,60 @@ class TaskAlmostDueController extends GetxController {
         'heroTag': heroTag,
       },
     );
+  }
+
+  Future<void> onStartTask(String taskId) async {
+    try {
+      final confirm = await Get.dialog<bool>(
+        AlertDialog(
+          title: const Text('Xác nhận'),
+          content: const Text('Bạn có chắc chắn muốn bắt đầu công việc này?'),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: const Text('Đồng ý'),
+            ),
+          ],
+        ),
+      );
+      if (confirm == null || !confirm) {
+        return;
+      }
+      final result = await _taskService.putStatusTask(
+        taskId,
+        PutStatusTaskBody(
+          status: TaskProgressEnum.inProgress.toCode(),
+          imageEvidenceUrl: null,
+        ),
+      );
+      if (result) {
+        Toast.showSuccess(message: 'Bắt đầu công việc thành công');
+        await loadTaskProgressData();
+      } else {
+        Toast.showError(message: 'Bắt đầu công việc thất bại');
+      }
+    } catch (e) {
+      Logger.log(e.toString(), name: 'TaskDetailController - onStartTask()');
+      Toast.showError(message: 'Có lỗi xảy ra, vui lòng thử lại sau');
+    }
+  }
+
+  Future<void> onCompleteTask(String taskId) async {
+    final isCompleteDone = await Get.toNamed(
+      RouteConstants.completeTaskRoute,
+      arguments: {
+        'taskId': taskId,
+      },
+    );
+    if (isCompleteDone == null) {
+      return;
+    }
+    if (isCompleteDone) {
+      await loadTaskProgressData();
+    }
   }
 }

@@ -9,7 +9,8 @@ class ModuleConfig {
     required this.baseUrlConfig,
     this.onCreateLocalNotificationCallback,
   })  : _userConfig = null,
-        _authConfig = null;
+        _authConfig = null,
+        tabsInTaskView = null;
 
   final bool isShowLog;
 
@@ -47,6 +48,8 @@ class ModuleConfig {
   // set setModuleRole(ModuleRole? moduleRole) => _moduleRole = moduleRole;
 
   OnCreateLocalNotifyCallback? onCreateLocalNotificationCallback;
+
+  List<ListTaskTab>? tabsInTaskView;
 }
 
 class BaseUrlConfig {

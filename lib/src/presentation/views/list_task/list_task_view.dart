@@ -33,6 +33,7 @@ class ListTaskView extends StatefulWidget {
     String title = 'Danh sách công việc',
     required ListTaskTab initialTabType,
     ListTaskViewConfig config = const ListTaskViewConfig(),
+    List<ListTaskTab>? tabs,
   }) {
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +62,7 @@ class _ListTaskViewState extends State<ListTaskView> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ListTaskViewController>(
-      init: Get.find<ListTaskViewController>(),
-      builder: (_) {
+      builder: (controller) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -70,15 +70,17 @@ class _ListTaskViewState extends State<ListTaskView> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Row(
-                  children: [
-                    const Expanded(child: _TaskSearchField()),
-                    if (widget.config.isShowFilterButton) ...[
-                      kGapW8,
-                      const _TaskFilterButton(),
-                    ]
-                  ],
-                ),
+                child: Obx(() => Row(
+                      children: [
+                        const Expanded(child: _TaskSearchField()),
+                        if (controller.taskWillShowFilter.contains(
+                                controller.selectedTab.value.tabType) &&
+                            widget.config.isShowFilterButton) ...[
+                          kGapW8,
+                          const _TaskFilterButton(),
+                        ]
+                      ],
+                    )),
               ),
               if (widget.config.isShowTabBar) ...[
                 kGapH12,
@@ -163,7 +165,7 @@ class _TaskTabBar extends GetView<ListTaskViewController> {
         fontWeight: FontWeight.normal,
       ),
       dividerColor: Colors.transparent,
-      tabs: ListTaskTab.tabs
+      tabs: (controller.moduleConfig.tabsInTaskView ?? ListTaskTab.defaultTabs)
           .map(
             (e) => Tab(
               child: Container(
@@ -234,6 +236,8 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
             isShowStatus: true,
             isShowServiceName: true,
             isShowCustomerName: true,
+            taskCardColor:
+                item.status.isExpected ? Colors.black12.withOpacity(.05) : null,
             actionConfig: controller.taskWillShowActions.contains(item.status)
                 ? ActionConfig(
                     actions: [
@@ -243,7 +247,7 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
                         ActionItem(
                           icon: Icons.play_arrow_rounded,
                           actionLabel: 'Bắt đầu thực hiện',
-                          onTap: () {},
+                          onTap: () => controller.onStartTask(item.id),
                         ),
 
                       ///TODO: Add action for task
@@ -251,7 +255,7 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
                         ActionItem(
                           icon: Icons.check,
                           actionLabel: 'Báo cáo hoàn thành',
-                          onTap: () {},
+                          onTap: () => controller.onCompleteTask(item.id),
                         ),
                     ],
                   )

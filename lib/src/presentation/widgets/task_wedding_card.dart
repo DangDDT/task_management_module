@@ -19,6 +19,7 @@ class TaskServiceCardViewConfig {
   final ActionConfig? actionConfig;
   final bool isShowStatus;
   final TextStyle? taskNameStyle;
+  final Color? taskCardColor;
   const TaskServiceCardViewConfig({
     this.isShowDescription = true,
     this.isShowDueDate = true,
@@ -31,6 +32,7 @@ class TaskServiceCardViewConfig {
     this.isShowStatus = false,
     this.isShowServiceName = false,
     this.taskNameStyle,
+    this.taskCardColor,
   });
 }
 
@@ -135,9 +137,10 @@ class TaskWeddingCard extends StatelessWidget {
         width: double.infinity,
         child: Container(
           decoration: BoxDecoration(
-            color: config.isFilled
-                ? kTheme.colorScheme.primaryContainer.withOpacity(0.4)
-                : kTheme.colorScheme.background,
+            color: config.taskCardColor ??
+                (config.isFilled
+                    ? kTheme.colorScheme.primaryContainer.withOpacity(0.4)
+                    : kTheme.colorScheme.background),
             borderRadius: BorderRadius.circular(12.0),
             border: Border.all(color: kTheme.colorScheme.background),
           ),

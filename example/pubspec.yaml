@@ -38,6 +38,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   task_management_module:
     path: ../
+  wss_repository:
+    git:
+      url: https://github.com/DangDDT/wss_repository.git
+      ref: main
   get: ^4.6.5
   google_fonts: ^5.1.0
   isar: ^3.1.0+1

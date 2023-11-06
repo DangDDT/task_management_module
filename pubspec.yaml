@@ -40,7 +40,10 @@ dependencies:
   table_calendar: ^3.0.9
   add_2_calendar: ^2.2.4
   image_preview: ^1.0.4
-
+  wss_repository:
+    git:
+      url: https://github.com/DangDDT/wss_repository.git
+      ref: main
   core_picker:
     path: ../picker_package
     # git:

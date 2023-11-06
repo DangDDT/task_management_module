@@ -94,7 +94,7 @@ class OrderDetailDialog extends StatelessWidget {
             ),
             kGapH4,
             _RowData(
-              title: 'Chiết khấu',
+              title: 'Phần trăm chiết khấu',
               content: '${orderDetail.commission.toString()} %',
               contentStyle: kTheme.textTheme.titleMedium?.copyWith(
                 color: kTheme.colorScheme.onBackground.withOpacity(0.5),
@@ -103,7 +103,7 @@ class OrderDetailDialog extends StatelessWidget {
             ),
             kGapH4,
             _RowData(
-              title: 'Tổng chiết khấu',
+              title: 'Tiền chiết khấu',
               content:
                   ' - ${orderDetail.totalCommission.toInt().toVietNamCurrency()}',
               contentStyle: kTheme.textTheme.titleMedium?.copyWith(

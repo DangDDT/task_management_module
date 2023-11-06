@@ -24,9 +24,10 @@ class TaskManagementModule {
     await IsarDatabase.init();
 
     await GlobalBinding.setUpLocator(
-        isShowLog: isShowLog,
-        baseUrlConfig: baseUrlConfig,
-        onCreateLocalNotificationCallback: onCreateLocalNotificationCallback);
+      isShowLog: isShowLog,
+      baseUrlConfig: baseUrlConfig,
+      onCreateLocalNotificationCallback: onCreateLocalNotificationCallback,
+    );
     _isInitialized = true;
   }
 
@@ -38,16 +39,21 @@ class TaskManagementModule {
     }
   }
 
-  static Future<void> login(
-      {required UserConfig userConfig, AuthConfig? authConfig}) async {
+  static Future<void> login({
+    required UserConfig userConfig,
+    AuthConfig? authConfig,
+    List<ListTaskTab>? listTaskTabs,
+  }) async {
     _assertInitialized();
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = userConfig;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = authConfig;
+    Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = listTaskTabs;
   }
 
   static Future<void> logout() async {
     _assertInitialized();
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = null;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = null;
+    Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = null;
   }
 }

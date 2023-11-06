@@ -180,8 +180,12 @@ class _DataView extends StatelessWidget {
           _TaskReminderSection(item: item),
           kGapH16,
         ],
-        const Divider(),
-        _CommentSection(item: item),
+        if (item.status.isInProgress ||
+            item.status.isTodo ||
+            item.status.isDone) ...[
+          const Divider(),
+          _CommentSection(item: item),
+        ],
       ],
     );
   }
@@ -401,44 +405,80 @@ class _TaskMasterSection extends StatelessWidget {
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                FontAwesomeIcons.personCircleCheck,
-                color: kTheme.colorScheme.primary,
-                size: 18,
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.personCircleCheck,
+                    color: kTheme.colorScheme.primary,
+                    size: 18,
+                  ),
+                  kGapW8,
+                  Text(
+                    'Người giao',
+                    style: kTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+                  ),
+                ],
               ),
-              kGapW8,
-              Text(
-                'Người giao',
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: kTheme.colorScheme.onBackground,
-                ),
-              ),
+              kGapH12,
+              Row(
+                children: [
+                  CircleAvatarWithErrorHandler(
+                    avatarUrl: item.taskMaster?.avatar,
+                    fullName: item.taskMaster?.name,
+                  ),
+                  kGapW8,
+                  Text(
+                    item.taskMaster?.name ?? 'Không có dữ liệu',
+                    style: kTheme.textTheme.titleMedium?.copyWith(
+                      color: kTheme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
-          kGapH12,
+          kGapH8,
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CircleAvatarWithErrorHandler(
-                avatarUrl: item.taskMaster?.avatar,
-                fullName: item.taskMaster?.name,
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.calendarCheck,
+                    color: kTheme.colorScheme.primary,
+                    size: 18,
+                  ),
+                  kGapW8,
+                  Text(
+                    'Ngày giao',
+                    style: kTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+                  ),
+                ],
               ),
-              kGapW8,
+              kGapH12,
               Text(
-                item.taskMaster?.name ?? 'Không có dữ liệu',
+                item.createdDate.toFullString(),
                 style: kTheme.textTheme.titleMedium?.copyWith(
                   color: kTheme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
+              )
             ],
-          )
+          ),
         ],
       ),
     );

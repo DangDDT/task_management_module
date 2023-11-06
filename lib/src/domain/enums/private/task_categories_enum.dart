@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 enum TaskProgressEnum {
   all('Tất cả'),
+  expected('Dự kiến'),
   toDo('Mới giao'),
   inProgress('Đang thực hiện'),
   done('Đã hoàn thành');
@@ -11,6 +12,10 @@ enum TaskProgressEnum {
   final String name;
 
   const TaskProgressEnum(this.name);
+
+  bool get isAll => this == TaskProgressEnum.all;
+
+  bool get isExpected => this == TaskProgressEnum.expected;
 
   bool get isTodo => this == TaskProgressEnum.toDo;
 
@@ -20,6 +25,8 @@ enum TaskProgressEnum {
 
   String toCode() {
     switch (this) {
+      case TaskProgressEnum.expected:
+        return 'EXPECTED';
       case TaskProgressEnum.toDo:
         return 'TO_DO';
       case TaskProgressEnum.inProgress:
@@ -33,13 +40,14 @@ enum TaskProgressEnum {
 
   static TaskProgressEnum fromCode(String code) {
     switch (code) {
-      case 'TO_DO':
+      case 'TO_DO' || 'TO DO' || 'TODO' || 'Todo':
         return TaskProgressEnum.toDo;
-      case 'IN_PROGRESS':
+      case 'IN_PROGRESS' || 'INPROGRESS' || 'In Progress' || 'Inprogress':
         return TaskProgressEnum.inProgress;
-      case 'DONE':
+      case 'DONE' || 'Done' || 'done':
         return TaskProgressEnum.done;
-
+      case 'EXPECTED' || 'Expected' || 'expected':
+        return TaskProgressEnum.expected;
       default:
         return TaskProgressEnum.all;
     }
@@ -47,6 +55,8 @@ enum TaskProgressEnum {
 
   Color get color {
     switch (this) {
+      case TaskProgressEnum.expected:
+        return Colors.grey;
       case TaskProgressEnum.toDo:
         return Colors.grey;
       case TaskProgressEnum.inProgress:
@@ -73,6 +83,7 @@ enum TaskProgressEnum {
 
   static get mockRandom {
     final listForRandom = [
+      TaskProgressEnum.expected,
       TaskProgressEnum.toDo,
       TaskProgressEnum.inProgress,
       TaskProgressEnum.done,

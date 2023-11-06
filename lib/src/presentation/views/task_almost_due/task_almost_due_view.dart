@@ -1,8 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
 import 'package:uuid/uuid.dart';
 
@@ -106,17 +104,17 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
         child: Column(
           children: [
             kGapH24,
-            Icon(
-              FontAwesomeIcons.faceSmile,
-              color: kTheme.colorScheme.error,
+            const Icon(
+              Icons.data_array_rounded,
               size: 48,
+              color: Colors.grey,
             ),
             kGapH12,
             Text(
               'Không có công việc nào sắp đến hạn',
               style: kTheme.textTheme.titleMedium?.copyWith(
-                color: kTheme.colorScheme.error,
                 fontWeight: FontWeight.bold,
+                color: Colors.grey,
               ),
             ),
           ],
@@ -145,7 +143,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
   }
 }
 
-class _TaskAlarmReminderCard extends StatelessWidget {
+class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
   const _TaskAlarmReminderCard({
     required this.task,
     required this.onTap,
@@ -179,11 +177,17 @@ class _TaskAlarmReminderCard extends StatelessWidget {
           actionConfig: ActionConfig(
             actions: [
               ///TODO: Add action for task
-              if (task.status == TaskProgressEnum.toDo)
+              if (task.status.isTodo)
+                ActionItem(
+                  icon: Icons.play_arrow_rounded,
+                  actionLabel: 'Bắt đầu thực hiện',
+                  onTap: () => controller.onStartTask(task.id),
+                ),
+              if (task.status.isInProgress)
                 ActionItem(
                   icon: Icons.play_arrow_rounded,
                   actionLabel: 'Báo cáo hoàn thành',
-                  onTap: () {},
+                  onTap: () => controller.onCompleteTask(task.id),
                 ),
             ],
           ),

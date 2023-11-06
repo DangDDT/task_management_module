@@ -5,20 +5,27 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
+import 'package:task_management_module/src/domain/requests/get_task_wedding_param.dart';
+import 'package:task_management_module/src/domain/requests/put_status_task_body.dart';
+import 'package:task_management_module/src/domain/services/task_service.dart';
+import 'package:task_management_module/src/presentation/shared/toast.dart';
 
 import '../../../../core/core.dart';
-import '../../../domain/mock/dummy.dart';
+import '../../../../core/utils/helpers/logger.dart';
 import '../../../domain/models/task_model.dart';
-import '../../../domain/requests/get_task_list_param.dart';
 import 'widgets/filter_task_bottom_sheet.dart';
 
 class ListTaskViewController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final ListTaskTab? initialTabType;
+  final ITaskService _taskService = Get.find();
 
   ListTaskViewController({
     this.initialTabType,
   });
+
+  ///Configs
+  final ModuleConfig moduleConfig = Get.find(tag: ModuleConfig.tag);
 
   ///Constants
   static const _pageSize = 20;
@@ -30,6 +37,12 @@ class ListTaskViewController extends GetxController
     TaskProgressEnum.toDo,
     TaskProgressEnum.inProgress,
   ];
+  final List<TaskProgressEnum> taskWillShowFilter = [
+    TaskProgressEnum.all,
+    TaskProgressEnum.toDo,
+    TaskProgressEnum.inProgress,
+    TaskProgressEnum.done,
+  ];
 
   ///Controllers
   TextEditingController searchController = TextEditingController();
@@ -37,22 +50,24 @@ class ListTaskViewController extends GetxController
       PagingController(firstPageKey: 0, invisibleItemsThreshold: 10);
   final ScrollController scrollController = ScrollController();
 
-  late final TabController tabController = TabController(
-    length: ListTaskTab.tabs.length,
-    vsync: this,
-  );
+  late final TabController tabController;
 
   ///States
   final Rx<int> currentPage = 0.obs;
   final Rx<String> searchText = ''.obs;
   late final Rx<ListTaskTab> selectedTab =
       initialTabType != null ? initialTabType!.obs : ListTaskTab.all().obs;
-
   final Rxn<FilterTask> filter = Rxn<FilterTask>();
 
   @override
   onInit() {
     super.onInit();
+    tabController = TabController(
+      length: moduleConfig.tabsInTaskView != null
+          ? moduleConfig.tabsInTaskView!.length
+          : ListTaskTab.defaultTabs.length,
+      vsync: this,
+    );
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
@@ -67,12 +82,13 @@ class ListTaskViewController extends GetxController
   @override
   onClose() {
     searchController.dispose();
-    pagingController.dispose();
     super.onClose();
   }
 
   Future<void> onChangeTab(int index) async {
-    selectedTab.value = ListTaskTab.tabs[index];
+    selectedTab.value = moduleConfig.tabsInTaskView != null
+        ? moduleConfig.tabsInTaskView![index]
+        : ListTaskTab.defaultTabs[index];
     currentPage.value = 0;
     pagingController.refresh();
   }
@@ -95,18 +111,35 @@ class ListTaskViewController extends GetxController
   Future<void> _fetchPage(int pageKey) async {
     try {
       await Future.delayed(Duration(seconds: faker.randomGenerator.integer(3)));
-      final newItems = Dummy.getDummyTasks(
-        GetTaskListParam(
+      final newItems = await _taskService.getTaskWeddings(
+        GetTaskWeddingParam(
+          pageIndex: pageKey,
           pageSize: _pageSize,
-          pageIndex: currentPage.value,
-          searchKey: searchController.text,
-          duedateFrom: filter.value?.duedate,
-          duedateTo: filter.value?.duedate?.add(const Duration(days: 1)),
-          taskStatusCodes: [
-            selectedTab.value.tabType.toCode(),
-          ],
+          orderBy: 'CreateDate',
+          orderType: 'DESC',
+          dueDateFrom: null,
+          dueDateTo: null,
+          status: selectedTab.value.tabType.isAll
+              ? null
+              : [
+                  selectedTab.value.tabType.toCode(),
+                ],
+          taskName:
+              searchController.text.isEmpty ? null : searchController.text,
         ),
       );
+      // Dummy.getDummyTasks(
+      //   GetTaskListParam(
+      //     pageSize: _pageSize,
+      //     pageIndex: currentPage.value,
+      //     searchKey: searchController.text,
+      //     duedateFrom: filter.value?.duedate,
+      //     duedateTo: filter.value?.duedate?.add(const Duration(days: 1)),
+      //     taskStatusCodes: [
+      //       selectedTab.value.tabType.toCode(),
+      //     ],
+      //   ),
+      // );
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
@@ -115,7 +148,9 @@ class ListTaskViewController extends GetxController
         pagingController.appendPage(newItems, nextPageKey);
       }
       currentPage.value++;
-    } catch (error) {
+    } catch (error, stackTrace) {
+      Logger.log(error.toString(),
+          name: 'ListTaskViewController_fetchPage', stackTrace: stackTrace);
       pagingController.error = error;
     }
   }
@@ -147,6 +182,61 @@ class ListTaskViewController extends GetxController
       },
     );
   }
+
+  Future<void> onStartTask(String taskId) async {
+    try {
+      final confirm = await Get.dialog<bool>(
+        AlertDialog(
+          title: const Text('Xác nhận'),
+          content: const Text('Bạn có chắc chắn muốn bắt đầu công việc này?'),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: const Text('Đồng ý'),
+            ),
+          ],
+        ),
+      );
+      if (confirm == null || !confirm) {
+        return;
+      }
+      final result = await _taskService.putStatusTask(
+        taskId,
+        PutStatusTaskBody(
+          status: TaskProgressEnum.inProgress.toCode(),
+          imageEvidenceUrl: null,
+        ),
+      );
+      if (result) {
+        Toast.showSuccess(message: 'Bắt đầu công việc thành công');
+        await onRefreshList();
+      } else {
+        Toast.showError(message: 'Bắt đầu công việc thất bại');
+      }
+    } catch (e) {
+      Logger.log(e.toString(), name: 'TaskDetailController - onStartTask()');
+      Toast.showError(message: 'Có lỗi xảy ra, vui lòng thử lại sau');
+    }
+  }
+
+  Future<void> onCompleteTask(String taskId) async {
+    final isCompleteDone = await Get.toNamed(
+      RouteConstants.completeTaskRoute,
+      arguments: {
+        'taskId': taskId,
+      },
+    );
+    if (isCompleteDone == null) {
+      return;
+    }
+    if (isCompleteDone) {
+      await onRefreshList();
+    }
+  }
 }
 
 class ListTaskTab {
@@ -155,6 +245,9 @@ class ListTaskTab {
 
   factory ListTaskTab.all() => const ListTaskTab(
         tabType: TaskProgressEnum.all,
+      );
+  factory ListTaskTab.expected() => const ListTaskTab(
+        tabType: TaskProgressEnum.expected,
       );
   factory ListTaskTab.toDo() => const ListTaskTab(
         tabType: TaskProgressEnum.toDo,
@@ -166,8 +259,9 @@ class ListTaskTab {
         tabType: TaskProgressEnum.done,
       );
 
-  static List<ListTaskTab> get tabs => [
+  static List<ListTaskTab> get defaultTabs => [
         ListTaskTab.all(),
+        ListTaskTab.expected(),
         ListTaskTab.toDo(),
         ListTaskTab.inProgress(),
         ListTaskTab.done(),

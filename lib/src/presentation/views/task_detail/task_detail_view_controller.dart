@@ -6,12 +6,12 @@ import 'package:task_management_module/src/domain/models/task_model.dart';
 import 'package:task_management_module/src/domain/models/task_order_detail.dart';
 import 'package:task_management_module/src/domain/services/local_note_service.dart';
 import 'package:task_management_module/src/domain/services/local_task_event_reminder_service.dart';
+import 'package:task_management_module/src/domain/services/task_service.dart';
 import 'package:task_management_module/src/presentation/view_models/state_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/helpers/logger.dart';
 import '../../../domain/entities/task_note.dart';
-import '../../../domain/mock/dummy.dart';
 import '../../../domain/models/task_note.dart';
 import 'order_detail_dialog.dart';
 import 'widgets/add_note_dialog.dart';
@@ -26,6 +26,7 @@ class TaskDetailViewController extends GetxController {
   final LocalNoteService _localNoteService = Get.find();
   final LocalTaskEventReminderService _localTaskEventReminderService =
       Get.find();
+  final ITaskService _taskService = Get.find();
 
   final dynamic id;
 
@@ -60,13 +61,8 @@ class TaskDetailViewController extends GetxController {
   Future<void> loadTaskDetailModel() async {
     taskModel.loading(loadingData: TaskWeddingModel.loading());
     try {
-      await Future.delayed(
-        const Duration(seconds: 1),
-        () {
-          final data = Dummy.dummyTaskDetailById(id);
-          taskModel.success(data);
-        },
-      );
+      final data = await _taskService.getTaskWedding(id.toString());
+      taskModel.success(data);
     } catch (e) {
       taskModel.error(
         e.toString(),
