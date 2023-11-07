@@ -212,9 +212,11 @@ packages:
   core_picker:
     dependency: transitive
     description:
-      path: "../../picker_package"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "8f16d097edf9f590ddaaa6bc619f58d633934b48"
+      url: "https://github.com/DangDDT/picker_package.git"
+    source: git
     version: "0.0.1"
   cross_file:
     dependency: transitive
@@ -1228,9 +1230,11 @@ packages:
   vif_previewer:
     dependency: transitive
     description:
-      path: "../../previewer_package"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "338bf594ba49fcb9311edaeaac30e325c11bad33"
+      url: "https://github.com/DangDDT/previewer_package.git"
+    source: git
     version: "0.0.1"
   watcher:
     dependency: transitive
