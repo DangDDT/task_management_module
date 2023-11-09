@@ -43,9 +43,22 @@ class ProgressTaskController extends GetxController {
         ),
       );
 
-      data = data.where((element) {
-        return taskWillShow.contains(element.type);
+      data = taskWillShow.map((e) {
+        return data.firstWhere(
+          (element) => element.type == e,
+          orElse: () => TaskProgressModel(
+            type: e,
+            name: e.name,
+            code: e.code,
+            id: e.code,
+            value: 0,
+            description: 'unknown',
+          ),
+        );
       }).toList();
+      // data.where((element) {
+      //   return taskWillShow.contains(element.type);
+      // }).toList();
 
       taskProgressState.success(data);
     } catch (e, stackTrace) {

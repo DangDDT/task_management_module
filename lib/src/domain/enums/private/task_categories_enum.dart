@@ -3,15 +3,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 enum TaskProgressEnum {
-  all('Tất cả'),
-  expected('Dự kiến'),
-  toDo('Mới giao'),
-  inProgress('Đang thực hiện'),
-  done('Đã hoàn thành');
+  all('Tất cả', 'ALL'),
+  expected('Dự kiến', 'EXPECTED'),
+  toDo('Mới giao', 'TO_DO'),
+  inProgress('Đang thực hiện', 'IN_PROGRESS'),
+  done('Đã hoàn thành', 'DONE');
 
   final String name;
+  final String code;
 
-  const TaskProgressEnum(this.name);
+  const TaskProgressEnum(this.name, this.code);
 
   bool get isAll => this == TaskProgressEnum.all;
 
