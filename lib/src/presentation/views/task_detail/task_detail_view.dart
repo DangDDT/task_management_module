@@ -143,12 +143,13 @@ class _DataView extends StatelessWidget {
           endIndent: 200,
         ),
         if (item.taskMaster != null) ...[
-          _ServiceTitle(item: item),
           kGapH8,
-          _TaskMasterSection(item: item),
+          _ServiceTitle(item: item),
+          // kGapH8,
+          // _TaskMasterSection(item: item),
         ] else
           kGapH12,
-        kGapH4,
+        kGapH12,
         _TaskOrderDetailsSection(
           item: item,
         ),
@@ -331,68 +332,68 @@ class _ServiceTitle extends GetView<TaskDetailViewController> {
               color: kTheme.colorScheme.onBackground,
             ),
           ),
-          Row(
-            children: [
-              if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
-                IconButton.filledTonal(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.green.withOpacity(0.8),
-                    minimumSize: const Size.square(28),
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(8),
-                  ),
-                  onPressed: () => controller.call(
-                    item.taskMaster?.phoneNumber ?? '',
-                  ),
-                  icon: Icon(
-                    Icons.phone,
-                    color: kTheme.colorScheme.onPrimary,
-                    size: 18,
-                  ),
-                ),
-              if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
-                IconButton.filledTonal(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.red.withOpacity(0.8),
-                    minimumSize: const Size.square(28),
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(8),
-                  ),
-                  onPressed: () => controller.sendSms(
-                    item.taskMaster?.phoneNumber ?? '',
-                  ),
-                  icon: Icon(
-                    Icons.sms,
-                    color: kTheme.colorScheme.onPrimary,
-                    size: 18,
-                  ),
-                ),
-              if (item.taskMaster?.email.isNotEmpty ?? false)
-                IconButton.filledTonal(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.blue.withOpacity(0.8),
-                    minimumSize: const Size.square(28),
-                    shape: const CircleBorder(),
-                    padding: const EdgeInsets.all(8),
-                  ),
-                  onPressed: () => controller.sendEmail(
-                    item.taskMaster?.email ?? '',
-                  ),
-                  icon: Icon(
-                    Icons.email,
-                    color: kTheme.colorScheme.onPrimary,
-                    size: 18,
-                  ),
-                ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
+          //       IconButton.filledTonal(
+          //         style: IconButton.styleFrom(
+          //           backgroundColor: Colors.green.withOpacity(0.8),
+          //           minimumSize: const Size.square(28),
+          //           shape: const CircleBorder(),
+          //           padding: const EdgeInsets.all(8),
+          //         ),
+          //         onPressed: () => controller.call(
+          //           item.taskMaster?.phoneNumber ?? '',
+          //         ),
+          //         icon: Icon(
+          //           Icons.phone,
+          //           color: kTheme.colorScheme.onPrimary,
+          //           size: 18,
+          //         ),
+          //       ),
+          //     if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
+          //       IconButton.filledTonal(
+          //         style: IconButton.styleFrom(
+          //           backgroundColor: Colors.red.withOpacity(0.8),
+          //           minimumSize: const Size.square(28),
+          //           shape: const CircleBorder(),
+          //           padding: const EdgeInsets.all(8),
+          //         ),
+          //         onPressed: () => controller.sendSms(
+          //           item.taskMaster?.phoneNumber ?? '',
+          //         ),
+          //         icon: Icon(
+          //           Icons.sms,
+          //           color: kTheme.colorScheme.onPrimary,
+          //           size: 18,
+          //         ),
+          //       ),
+          //     if (item.taskMaster?.email.isNotEmpty ?? false)
+          //       IconButton.filledTonal(
+          //         style: IconButton.styleFrom(
+          //           backgroundColor: Colors.blue.withOpacity(0.8),
+          //           minimumSize: const Size.square(28),
+          //           shape: const CircleBorder(),
+          //           padding: const EdgeInsets.all(8),
+          //         ),
+          //         onPressed: () => controller.sendEmail(
+          //           item.taskMaster?.email ?? '',
+          //         ),
+          //         icon: Icon(
+          //           Icons.email,
+          //           color: kTheme.colorScheme.onPrimary,
+          //           size: 18,
+          //         ),
+          //       ),
+          //   ],
+          // ),
         ],
       ),
     );
   }
 }
 
-class _TaskMasterSection extends StatelessWidget {
+class _TaskMasterSection extends GetView<TaskDetailViewController> {
   const _TaskMasterSection({
     required this.item,
   });
@@ -701,7 +702,7 @@ class _CommentSection extends StatelessWidget {
             ],
           ),
           kGapH16,
-          CommentTaskView(taskId: item.id),
+          CommentTaskView.items(items: item.comments),
         ],
       ),
     );

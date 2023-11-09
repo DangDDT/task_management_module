@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
+import 'package:task_management_module/src/domain/domain.dart';
 import 'package:task_management_module/src/domain/models/task_comment.dart';
 import 'package:task_management_module/src/presentation/shared/circle_avatar_with_error_handler.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
@@ -9,79 +10,86 @@ import 'comment_task_controller.dart';
 
 class CommentTaskView extends GetView<CommentTaskViewController> {
   final dynamic taskId;
+  final List<TaskCommentModel>? items;
   const CommentTaskView({
     super.key,
     required this.taskId,
-  });
+  }) : items = null;
+
+  const CommentTaskView.items({
+    super.key,
+    required this.items,
+  }) : taskId = null;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<CommentTaskViewController>(
-      init: CommentTaskViewController(
-        taskId: taskId,
-      ),
+      init: CommentTaskViewController(),
       tag: 'CommentTaskViewController-${taskId.toString()}',
       builder: (controller) {
-        return Obx(
-          () => AnimatedSize(
-            duration: const Duration(milliseconds: 410),
-            alignment: Alignment.topCenter,
-            child: Column(
-              children: [
-                _AddCommentTextField(
-                  fullName: controller.config.userConfig.fullName,
-                  avatarUrl: controller.config.userConfig.avatar,
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 410),
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              _AddCommentTextField(
+                fullName: controller.config.userConfig.fullName,
+                avatarUrl: controller.config.userConfig.avatar,
+              ),
+              kGapH8,
+              StateRender<List<TaskCommentModel>, TaskCommentModel>(
+                state: LoadingState.success,
+                data: items ?? [],
+                layoutBuilder: (data, itemBuilder) => _TaskCommentLayoutBuilder(
+                  data: data,
+                  itemBuilder: itemBuilder,
+                  dataDisplay: controller.isShowAll.value ? data.length : 3,
                 ),
-                kGapH8,
-                StateRender<List<TaskCommentModel>, TaskCommentModel>(
-                  state: controller.taskComments.state.value,
-                  data: controller.taskComments.data.value,
-                  layoutBuilder: (data, itemBuilder) =>
-                      _TaskCommentLayoutBuilder(
-                    data: controller.taskComments.data.value,
-                    itemBuilder: itemBuilder,
-                    dataDisplay: controller.isShowAll.value
-                        ? controller.taskComments.data.value.length
-                        : 3,
-                  ),
-                  itemBuilder: (item, index) => _TaskCommentItemView(
-                    item: item,
-                  ),
-                  isAnimation: true,
-                  horizontalSlideOffset: 0.0,
-                  verticalSlideOffset: 20.0,
-                  duration: const Duration(milliseconds: 410),
+                itemBuilder: (item, index) => _TaskCommentItemView(
+                  item: item,
                 ),
-                if (controller.taskComments.data.value.length > 3)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
-                    ),
-                    child: FilledButton.tonal(
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 32),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 16.0,
+                isAnimation: true,
+                horizontalSlideOffset: 0.0,
+                verticalSlideOffset: 20.0,
+                duration: const Duration(milliseconds: 410),
+                emptyBuilder: Center(
+                  child: Text(
+                    'Chưa có trao đổi nào',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: kTheme.colorScheme.primary,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                  ),
+                ),
+              ),
+              if ((items ?? []).length > 3)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
+                  child: FilledButton.tonal(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 32),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 16.0,
                       ),
-                      onPressed: () => controller.isShowAll.toggle(),
-                      child: Text(
-                        controller.isShowAll.value
-                            ? 'Thu gọn'
-                            : 'Xem tất cả (${controller.taskComments.data.value.length})',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: kTheme.colorScheme.primary,
-                            ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
+                    onPressed: () => controller.isShowAll.toggle(),
+                    child: Text(
+                      controller.isShowAll.value
+                          ? 'Thu gọn'
+                          : 'Xem tất cả (${(items ?? []).length})',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: kTheme.colorScheme.primary,
+                          ),
+                    ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         );
       },
@@ -125,6 +133,8 @@ class _AddCommentTextField extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Nhập trao đổi...',
                 border: InputBorder.none,
+                fillColor: Colors.transparent,
+                filled: true,
               ),
             ),
           ),

@@ -33,24 +33,23 @@ class RefreshTokenInterceptor implements Interceptor {
     if (error.response != null) {
       if (error.response!.statusCode == 401) {
         try {
-          final requestOptions = error.requestOptions;
-          final newAccessToken =
-              await _config.getAuthConfig?.onRefreshTokenCallback?.call();
-          if (newAccessToken == null) return handler.next(error);
-          final opts = Options(method: requestOptions.method);
-          final dioClient = Dio();
-          dioClient.options.headers['Authorization'] = 'Bearer $newAccessToken';
-          dioClient.options.headers['Accept'] = '*/*';
-          final response = await dioClient.request<dynamic>(
-            requestOptions.path,
-            options: opts,
-            cancelToken: requestOptions.cancelToken,
-            onReceiveProgress: requestOptions.onReceiveProgress,
-            data: requestOptions.data,
-            queryParameters: requestOptions.queryParameters,
-          );
-
-          return handler.resolve(response);
+          // final requestOptions = error.requestOptions;
+          // final newAccessToken =
+          //     await _config.getAuthConfig?.onRefreshTokenCallback?.call();
+          // if (newAccessToken == null) return handler.next(error);
+          // final opts = Options(method: requestOptions.method);
+          // final dioClient = Dio();
+          // dioClient.options.headers['Authorization'] = 'Bearer $newAccessToken';
+          // dioClient.options.headers['Accept'] = '*/*';
+          // final response = await dioClient.request<dynamic>(
+          //   requestOptions.path,
+          //   options: opts,
+          //   cancelToken: requestOptions.cancelToken,
+          //   onReceiveProgress: requestOptions.onReceiveProgress,
+          //   data: requestOptions.data,
+          //   queryParameters: requestOptions.queryParameters,
+          // );
+          return _config.getAuthConfig?.onUnauthorizedCallback?.call();
         } catch (e) {
           return handler.next(error);
         }

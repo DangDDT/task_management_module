@@ -75,8 +75,7 @@ class TaskService extends ITaskService {
       id: id,
       body: PutTaskBody(
         status: body.status,
-
-        /// Thiếu trường image evidence để complete task nha
+        imageEvidence: body.imageEvidenceUrl,
       ),
     );
     return result;

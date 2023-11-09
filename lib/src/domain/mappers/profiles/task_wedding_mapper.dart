@@ -17,71 +17,65 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       id: entity.id ?? DefaultValueMapperConstants.defaultStringValue,
       name: entity.taskName ?? DefaultValueMapperConstants.defaultStringValue,
       status: TaskProgressEnum.fromCode(entity.status ?? ''),
-      createdDate:
-          entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
-      duedate:
-          entity.endDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
 
       ///Trả về list không phải là 1 object
-      orderDetails: [
-        TaskOrderDetailModel(
-          commission: 1.0,
-          quantity: 1,
-          service: TaskServiceModel(
-            name: entity.orderDetail?.service?.name ??
-                DefaultValueMapperConstants.defaultStringValue,
+      orderDetails: (entity.order?.orderDetails != null)
+          ? [
+              for (var item in entity.order!.orderDetails)
+                TaskOrderDetailModel(
+                  commission: 1.0,
+                  quantity: 1,
+                  service: TaskServiceModel(
+                    name: item.service?.name ??
+                        DefaultValueMapperConstants.defaultStringValue,
+                    price: item.price?.toDouble() ??
+                        DefaultValueMapperConstants.defaultDoubleValue,
+                    description: item.description ??
+                        DefaultValueMapperConstants.defaultStringValue,
+                    images: item.service?.serviceImages ?? [],
 
-            ///Tạm thời map bằng giá với orderDetail do quantity = 1
-            price: entity.orderDetail?.price?.toDouble() ??
-                DefaultValueMapperConstants.defaultDoubleValue,
-            description: entity.orderDetail?.description ??
-                DefaultValueMapperConstants.defaultStringValue,
-            images: entity.orderDetail?.service?.serviceImages ?? [],
-
-            ///Thiếu dữ liệu đơn vị tính của service
-            unit: DefaultValueMapperConstants.defaultStringValue,
-          ),
-
-          price: entity.orderDetail?.price?.toDouble() ??
-              DefaultValueMapperConstants.defaultDoubleValue,
-          description: entity.orderDetail?.description ??
-              DefaultValueMapperConstants.defaultStringValue,
-
-          ///Thiếu dữ liệu ngày diễn ra sự kiện
-          eventDate: entity.orderDetail?.startTime ??
-              DefaultValueMapperConstants.defaultDateTimeValue,
-        )
-      ].toList(),
+                    ///Thiếu dữ liệu đơn vị tính của dịch vụ
+                    unit: 'dịch vụ',
+                  ),
+                  price: item.price?.toDouble() ??
+                      DefaultValueMapperConstants.defaultDoubleValue,
+                  description: item.description ??
+                      DefaultValueMapperConstants.defaultStringValue,
+                  eventDate: item.startTime ??
+                      DefaultValueMapperConstants.defaultDateTimeValue,
+                )
+            ].toList()
+          : [],
 
       comments: entity.comments
-              ?.map(
-                (e) => TaskCommentModel(
-                  id: e.id ?? DefaultValueMapperConstants.defaultStringValue,
-                  content: e.content ??
-                      DefaultValueMapperConstants.defaultStringValue,
-                  createdAt: e.createDate ??
-                      DefaultValueMapperConstants.defaultDateTimeValue,
-                  creator: TaskCommentCreatorModel(
-                    id: e.createBy ??
-                        DefaultValueMapperConstants.defaultStringValue,
+          .map(
+            (e) => TaskCommentModel(
+              id: e.id ?? DefaultValueMapperConstants.defaultStringValue,
+              content:
+                  e.content ?? DefaultValueMapperConstants.defaultStringValue,
+              createdAt: e.createDate ??
+                  DefaultValueMapperConstants.defaultDateTimeValue,
+              creator: TaskCommentCreatorModel(
+                id: e.createBy ??
+                    DefaultValueMapperConstants.defaultStringValue,
 
-                    ///Thiếu dữ liệu tên và ảnh đại diện của người tạo comment
-                    fullName: DefaultValueMapperConstants.defaultStringValue,
-                    avatar: DefaultValueMapperConstants.defaultStringValue,
-                  ),
-                ),
-              )
-              .toList() ??
-          [],
+                ///Thiếu dữ liệu tên và ảnh đại diện của người tạo comment
+                fullName: DefaultValueMapperConstants.defaultStringValue,
+                avatar: DefaultValueMapperConstants.defaultStringValue,
+              ),
+            ),
+          )
+          .toList(),
 
-      ///Thiếu dữ liệu thông tin khách hàng
       customer: TaskCustomerModel(
-        id: DefaultValueMapperConstants.defaultStringValue,
-        address: DefaultValueMapperConstants.defaultStringValue,
+        id: entity.order?.customerId ??
+            DefaultValueMapperConstants.defaultStringValue,
+        address: entity.order?.customer?.address ??
+            DefaultValueMapperConstants.defaultStringValue,
         avatar: DefaultValueMapperConstants.defaultStringValue,
-        email: DefaultValueMapperConstants.defaultStringValue,
-        fullName: DefaultValueMapperConstants.defaultStringValue,
-        phoneNumber: DefaultValueMapperConstants.defaultStringValue,
+        email: '',
+        fullName: entity.order?.customer?.fullname ?? '',
+        phoneNumber: entity.order?.customer?.phone ?? '',
       ),
 
       ///Thiếu dữ liệu thông tin bằng chứng báo cáo công việc (có thể null với các status khác)
@@ -91,12 +85,20 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
 
       ///Thiếu dữ liệu người tạo công việc
       taskMaster: TaskMasterModel(
-        id: DefaultValueMapperConstants.defaultStringValue,
-        avatar: DefaultValueMapperConstants.defaultStringValue,
-        name: DefaultValueMapperConstants.defaultStringValue,
-        email: DefaultValueMapperConstants.defaultStringValue,
-        phoneNumber: DefaultValueMapperConstants.defaultStringValue,
+        id: '${entity.createBy?.fullname}_${entity.createBy?.phone}',
+        avatar: '',
+        name: entity.createBy?.fullname ?? '',
+        phoneNumber: entity.createBy?.phone ?? '',
+
+        ///Thiếu dữ liệu email của người tạo công việc
+        email: '',
       ),
+
+      ///Thiếu dữ liệu thời gian tạo và thời gian hết hạn của công việc
+      createdDate:
+          entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
+      duedate:
+          entity.endDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
 
       ///Không hiển thị
 
