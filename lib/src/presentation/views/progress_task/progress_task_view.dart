@@ -22,9 +22,7 @@ class ProgressTaskView extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
               title: Text(
                 'Tiến độ công việc',
-                style: kTheme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: kTheme.textTheme.headlineSmall,
               ),
               trailing: TextButton(
                 onPressed: () async {

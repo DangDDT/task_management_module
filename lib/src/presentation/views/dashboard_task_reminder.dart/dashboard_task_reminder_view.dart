@@ -25,9 +25,7 @@ class DashboardTaskReminderView extends StatelessWidget {
             children: [
               Text(
                 'Lịch nhắc việc hôm nay',
-                style: kTheme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: kTheme.textTheme.headlineSmall,
               ),
               const SizedBox(height: 32),
               Obx(

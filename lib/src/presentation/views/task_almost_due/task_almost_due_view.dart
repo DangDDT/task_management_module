@@ -27,9 +27,7 @@ class TaskAlmostDueView extends StatelessWidget {
                 children: [
                   Text(
                     'Công việc sắp đến hạn',
-                    style: kTheme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: kTheme.textTheme.headlineSmall,
                   ),
                   kGapW4,
                   Obx(() {
