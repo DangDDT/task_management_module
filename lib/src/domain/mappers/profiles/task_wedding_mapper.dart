@@ -58,10 +58,10 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
               creator: TaskCommentCreatorModel(
                 id: e.createBy ??
                     DefaultValueMapperConstants.defaultStringValue,
-
-                ///Thiếu dữ liệu tên và ảnh đại diện của người tạo comment
-                fullName: DefaultValueMapperConstants.defaultStringValue,
-                avatar: DefaultValueMapperConstants.defaultStringValue,
+                fullName: e.createBy?.fullname ??
+                    DefaultValueMapperConstants.defaultStringValue,
+                avatar: e.createBy?.imageUrl ??
+                    DefaultValueMapperConstants.defaultStringValue,
               ),
             ),
           )
@@ -78,10 +78,9 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
         phoneNumber: entity.order?.customer?.phone ?? '',
       ),
 
-      ///Thiếu dữ liệu thông tin bằng chứng báo cáo công việc (có thể null với các status khác)
-      evidence: ImageEvidenceModel(
-        evidenceValue: DefaultValueMapperConstants.defaultStringValue,
-      ),
+      evidence: entity.imageEvidence != null
+          ? ImageEvidenceModel(evidenceValue: entity.imageEvidence!)
+          : null,
 
       ///Thiếu dữ liệu người tạo công việc
       taskMaster: TaskMasterModel(

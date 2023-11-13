@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/core.dart';
 import '../../../domain/models/task_model.dart';
@@ -26,7 +25,7 @@ class TaskAlmostDueView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Công việc sắp đến hạn',
+                    'Công việc cần hoàn thành',
                     style: kTheme.textTheme.headlineSmall,
                   ),
                   kGapW4,
@@ -67,11 +66,9 @@ class TaskAlmostDueView extends StatelessWidget {
                   );
                 },
                 itemBuilder: (item, _) {
-                  final heroTag = const Uuid().v4();
                   return _TaskAlarmReminderCard(
                     task: item,
-                    heroTag: heroTag,
-                    onTap: () => controller.onTapTaskCard(item, heroTag),
+                    onTap: () => controller.onTapTaskCard(item),
                   );
                 },
                 isAnimation: true,
@@ -109,7 +106,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
             ),
             kGapH12,
             Text(
-              'Không có công việc nào sắp đến hạn',
+              'Không có công việc nào cần hoàn thành',
               style: kTheme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
@@ -145,50 +142,44 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
   const _TaskAlarmReminderCard({
     required this.task,
     required this.onTap,
-    this.heroTag,
   });
   final TaskWeddingModel task;
   final VoidCallback onTap;
-  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: heroTag ?? const Uuid().v4(),
-      key: ValueKey(heroTag),
-      child: TaskWeddingCard(
-        onTap: onTap,
-        taskId: task.id,
-        name: task.name,
-        description: task.description,
-        duedate: task.duedate,
-        taskMasterName: task.taskMaster?.name ?? '',
-        customerName: task.customer.fullName,
-        serviceNames: task.orderDetails.map((e) => e.service.name).toList(),
-        status: task.status,
-        config: TaskServiceCardViewConfig(
-          isShowCustomerName: true,
-          isShowFullName: true,
-          isShowServiceName: true,
-          isShowStatus: true,
-          isShowDescription: false,
-          actionConfig: ActionConfig(
-            actions: [
-              ///TODO: Add action for task
-              if (task.status.isTodo)
-                ActionItem(
-                  icon: Icons.play_arrow_rounded,
-                  actionLabel: 'Bắt đầu thực hiện',
-                  onTap: () => controller.onStartTask(task.id),
-                ),
-              if (task.status.isInProgress)
-                ActionItem(
-                  icon: Icons.play_arrow_rounded,
-                  actionLabel: 'Báo cáo hoàn thành',
-                  onTap: () => controller.onCompleteTask(task.id),
-                ),
-            ],
-          ),
+    return TaskWeddingCard(
+      onTap: onTap,
+      taskId: task.id,
+      name: task.name,
+      description: task.description,
+      duedate: task.duedate,
+      taskMasterName: task.taskMaster?.name ?? '',
+      customerName: task.customer.fullName,
+      serviceNames: task.orderDetails.map((e) => e.service.name).toList(),
+      status: task.status,
+      config: TaskServiceCardViewConfig(
+        isShowCustomerName: true,
+        isShowFullName: true,
+        isShowServiceName: true,
+        isShowStatus: true,
+        isShowDescription: false,
+        actionConfig: ActionConfig(
+          actions: [
+            ///TODO: Add action for task
+            if (task.status.isTodo)
+              ActionItem(
+                icon: Icons.play_arrow_rounded,
+                actionLabel: 'Bắt đầu thực hiện',
+                onTap: () => controller.onStartTask(task.id),
+              ),
+            if (task.status.isInProgress)
+              ActionItem(
+                icon: Icons.play_arrow_rounded,
+                actionLabel: 'Báo cáo hoàn thành',
+                onTap: () => controller.onCompleteTask(task.id),
+              ),
+          ],
         ),
       ),
     );

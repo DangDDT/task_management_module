@@ -7,7 +7,6 @@ import 'package:task_management_module/src/domain/enums/private/task_categories_
 import 'package:task_management_module/src/domain/models/task_model.dart';
 import 'package:task_management_module/src/presentation/views/list_task/list_task_view_controller.dart';
 import 'package:task_management_module/src/presentation/widgets/custom_text_field.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../widgets/task_wedding_card.dart';
 
@@ -220,47 +219,44 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
 
   @override
   Widget build(BuildContext context) {
-    final heroTag = const Uuid().v4();
     return GestureDetector(
-      onTap: () => controller.onTapTaskCard(item, heroTag),
-      child: Hero(
-        tag: heroTag,
-        child: TaskWeddingCard.item(
-          item: item,
-          config: TaskServiceCardViewConfig(
-            isShowDescription: false,
-            isShowDueDate: controller.taskWillShowDueDate.contains(item.status),
-            isShowTag: true,
-            isShowFullName: true,
-            isShowFullDescription: true,
-            isShowStatus: true,
-            isShowServiceName: true,
-            isShowCustomerName: true,
-            taskCardColor:
-                item.status.isExpected ? Colors.black12.withOpacity(.05) : null,
-            actionConfig: controller.taskWillShowActions.contains(item.status)
-                ? ActionConfig(
-                    actions: [
-                      ///TODO: Add action for task
-                      ///
-                      if (item.status == TaskProgressEnum.toDo)
-                        ActionItem(
-                          icon: Icons.play_arrow_rounded,
-                          actionLabel: 'Bắt đầu thực hiện',
-                          onTap: () => controller.onStartTask(item.id),
-                        ),
+      onTap: () => controller.onTapTaskCard(item),
+      child: TaskWeddingCard.item(
+        item: item,
+        config: TaskServiceCardViewConfig(
+          isShowDescription: false,
+          isShowDueDate: false,
+          //  controller.taskWillShowDueDate.contains(item.status),
+          isShowTag: true,
+          isShowFullName: false,
+          isShowFullDescription: true,
+          isShowStatus: true,
+          isShowServiceName: true,
+          isShowCustomerName: false,
+          taskCardColor:
+              item.status.isExpected ? Colors.black12.withOpacity(.05) : null,
+          actionConfig: controller.taskWillShowActions.contains(item.status)
+              ? ActionConfig(
+                  actions: [
+                    ///TODO: Add action for task
+                    ///
+                    if (item.status == TaskProgressEnum.toDo)
+                      ActionItem(
+                        icon: Icons.play_arrow_rounded,
+                        actionLabel: 'Bắt đầu thực hiện',
+                        onTap: () => controller.onStartTask(item.id),
+                      ),
 
-                      ///TODO: Add action for task
-                      if (item.status == TaskProgressEnum.inProgress)
-                        ActionItem(
-                          icon: Icons.check,
-                          actionLabel: 'Báo cáo hoàn thành',
-                          onTap: () => controller.onCompleteTask(item.id),
-                        ),
-                    ],
-                  )
-                : null,
-          ),
+                    ///TODO: Add action for task
+                    if (item.status == TaskProgressEnum.inProgress)
+                      ActionItem(
+                        icon: Icons.check,
+                        actionLabel: 'Báo cáo hoàn thành',
+                        onTap: () => controller.onCompleteTask(item.id),
+                      ),
+                  ],
+                )
+              : null,
         ),
       ),
     );

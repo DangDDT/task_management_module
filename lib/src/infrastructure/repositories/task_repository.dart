@@ -12,6 +12,7 @@ import 'package:wss_repository/entities/task.dart';
 import 'package:wss_repository/entities/task_count.dart';
 import 'package:wss_repository/entities/uploaded_file.dart';
 import 'package:wss_repository/repositories/file_repository.dart';
+import 'package:wss_repository/requests/post_comment_body.dart';
 import 'package:wss_repository/wss_repository.dart';
 
 import '../../domain/requests/get_task_wedding_param.dart';
@@ -20,6 +21,7 @@ class TaskService extends ITaskService {
   final IStatisticRepository _statisticRepository = Get.find();
   final ITaskRepository _taskRepository = Get.find();
   final IFileRepository _fileRepository = Get.find();
+  final ICommentRepository _commentRepository = Get.find();
   final Mapper _mapper = Mapper.instance;
 
   @override
@@ -77,6 +79,14 @@ class TaskService extends ITaskService {
         status: body.status,
         imageEvidence: body.imageEvidenceUrl,
       ),
+    );
+    return result;
+  }
+
+  @override
+  Future<bool> addComment(String taskId, String content) async {
+    final result = await _commentRepository.postComment(
+      PostCommentBody(taskId: taskId, content: content),
     );
     return result;
   }

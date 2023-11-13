@@ -13,4 +13,5 @@ abstract class ITaskService {
   Future<TaskWeddingModel> getTaskWedding(String id);
   Future<List<UploadedFileModel>> uploadFiles(List<File> files);
   Future<bool> putStatusTask(String id, PutStatusTaskBody body);
+  Future<bool> addComment(String taskId, String content);
 }

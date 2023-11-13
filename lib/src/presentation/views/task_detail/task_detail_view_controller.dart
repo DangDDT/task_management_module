@@ -62,6 +62,9 @@ class TaskDetailViewController extends GetxController {
     taskModel.loading(loadingData: TaskWeddingModel.loading());
     try {
       final data = await _taskService.getTaskWedding(id.toString());
+
+      ///Sort comments by createdAt DESC
+      data.comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       taskModel.success(data);
     } catch (e) {
       taskModel.error(
@@ -260,5 +263,28 @@ class TaskDetailViewController extends GetxController {
       },
     );
     await loadTaskEventReminderModel();
+  }
+
+  Future<void> onAddComment(String comment) async {
+    try {
+      final addComment = await _taskService.addComment(
+        id.toString(),
+        comment,
+      );
+      if (!addComment) {
+        throw Exception('Có lỗi xảy ra, vui lòng thử lại sau');
+      }
+      final data = await _taskService.getTaskWedding(
+        id.toString(),
+      );
+      taskModel.data.value = taskModel.data.value.copyWithComment(
+        data.comments,
+      );
+    } catch (e) {
+      Logger.log(e.toString(), name: 'TaskDetailViewController_onAddComment()');
+      Toast.error(
+        message: 'Có lỗi xảy ra, vui lòng thử lại sau',
+      );
+    }
   }
 }

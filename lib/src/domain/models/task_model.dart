@@ -88,6 +88,22 @@ class TaskWeddingModel extends BaseTaskModel {
     this.evidence,
   });
 
+  TaskWeddingModel copyWithComment(List<TaskCommentModel> newComments) {
+    return TaskWeddingModel(
+      id: id,
+      name: name,
+      description: description,
+      createdDate: createdDate,
+      duedate: duedate,
+      taskMaster: taskMaster,
+      status: status,
+      comments: newComments.isEmpty ? comments : newComments,
+      orderDetails: orderDetails,
+      customer: customer,
+      evidence: evidence,
+    );
+  }
+
   factory TaskWeddingModel.loading() {
     return TaskWeddingModel(
       id: const UuidV4().generate(),

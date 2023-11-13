@@ -25,7 +25,6 @@ class TaskDetailPage extends GetView<TaskDetailController> {
         taskMasterName: controller.taskMasterName,
         serviceNames: controller.serviceNames,
         customerName: controller.customerName,
-        heroTag: controller.heroTag,
         status: controller.status,
       ),
       persistentFooterAlignment: AlignmentDirectional.topCenter,
@@ -63,7 +62,10 @@ class TaskDetailPage extends GetView<TaskDetailController> {
                     onPressed: controller.onCompleteTask,
                   );
                 case TaskProgressEnum.done:
-                  return const SizedBox(width: 0);
+                  return _ImageEvidenceButton(
+                    onPressed: controller.onShowImageEvidence,
+                    isEnable: controller.imageEvidenceUrl != null,
+                  );
                 default:
                   return const SizedBox(width: 0);
               }
@@ -89,6 +91,33 @@ class _EditProgressButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         label,
+        style: kTheme.textTheme.bodyMedium?.copyWith(
+          color: kTheme.colorScheme.onPrimary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageEvidenceButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final bool isEnable;
+  const _ImageEvidenceButton({
+    super.key,
+    this.onPressed,
+    this.isEnable = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: isEnable ? onPressed : null,
+      style: FilledButton.styleFrom(
+        backgroundColor: isEnable ? kTheme.colorScheme.primary : Colors.grey,
+      ),
+      child: Text(
+        'Hình ảnh báo cáo',
         style: kTheme.textTheme.bodyMedium?.copyWith(
           color: kTheme.colorScheme.onPrimary,
           fontWeight: FontWeight.bold,

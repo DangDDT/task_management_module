@@ -10,7 +10,6 @@ import 'package:task_management_module/src/presentation/shared/circle_avatar_wit
 import 'package:task_management_module/src/presentation/views/task_detail/task_detail_view_controller.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
 import 'package:task_management_module/src/presentation/widgets/task_wedding_card.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/core.dart';
 import '../../../domain/domain.dart';
@@ -30,7 +29,6 @@ class TaskDetailView extends StatelessWidget {
     required this.customerName,
     required this.serviceNames,
     required this.status,
-    this.heroTag,
   });
   final dynamic taskId;
   final String name;
@@ -39,7 +37,6 @@ class TaskDetailView extends StatelessWidget {
   final String taskMasterName;
   final String customerName;
   final List<String> serviceNames;
-  final String? heroTag;
   final TaskProgressEnum status;
 
   @override
@@ -92,7 +89,6 @@ class TaskDetailView extends StatelessWidget {
                         return _TaskSection(
                           taskId: taskId,
                           taskServiceCard: taskServiceCard,
-                          heroTag: heroTag,
                         );
                       },
                     ),
@@ -667,7 +663,7 @@ class _OrderDetailCard extends GetView<TaskDetailViewController> {
   }
 }
 
-class _CommentSection extends StatelessWidget {
+class _CommentSection extends GetView<TaskDetailViewController> {
   const _CommentSection({
     required this.item,
   });
@@ -702,7 +698,12 @@ class _CommentSection extends StatelessWidget {
             ],
           ),
           kGapH16,
-          CommentTaskView.items(items: item.comments),
+          CommentTaskView(
+            items: item.comments,
+            onAddComment: controller.onAddComment,
+            fullName: controller.config.userConfig.fullName,
+            avatarUrl: controller.config.userConfig.avatar,
+          ),
         ],
       ),
     );
@@ -713,33 +714,14 @@ class _TaskSection extends StatelessWidget {
   const _TaskSection({
     required this.taskId,
     required this.taskServiceCard,
-    this.heroTag,
   });
 
   final dynamic taskId;
   final TaskWeddingCard taskServiceCard;
-  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: heroTag ?? const Uuid().v4(),
-      flightShuttleBuilder: (
-        context,
-        animation,
-        flightDirection,
-        fromHeroContext,
-        toHeroContext,
-      ) {
-        return SizeTransition(
-          sizeFactor: animation,
-          child: SingleChildScrollView(
-            child: taskServiceCard,
-          ),
-        );
-      },
-      child: taskServiceCard,
-    );
+    return taskServiceCard;
   }
 }
 

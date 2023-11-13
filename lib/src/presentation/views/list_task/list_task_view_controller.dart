@@ -166,8 +166,8 @@ class ListTaskViewController extends GetxController
     pagingController.refresh();
   }
 
-  Future<void> onTapTaskCard(TaskWeddingModel item, String? heroTag) async {
-    Get.toNamed(
+  Future<void> onTapTaskCard(TaskWeddingModel item) async {
+    await Get.toNamed(
       RouteConstants.taskDetailRoute,
       arguments: {
         'taskId': item.id,
@@ -178,9 +178,11 @@ class ListTaskViewController extends GetxController
         'customerName': item.customer.fullName,
         'serviceNames': item.orderDetails.map((e) => e.service.name).toList(),
         'status': item.status,
-        'heroTag': heroTag,
+        'imageEvidenceUrl':
+            item.evidence != null ? item.evidence!.evidenceValue : null,
       },
     );
+    await onRefreshList();
   }
 
   Future<void> onStartTask(String taskId) async {

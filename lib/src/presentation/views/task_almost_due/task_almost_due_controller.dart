@@ -78,7 +78,7 @@ class TaskAlmostDueController extends GetxController {
     }
   }
 
-  Future<void> onTapTaskCard(TaskWeddingModel item, String heroTag) async {
+  Future<void> onTapTaskCard(TaskWeddingModel item) async {
     await Get.toNamed(
       RouteConstants.taskDetailRoute,
       arguments: {
@@ -90,7 +90,6 @@ class TaskAlmostDueController extends GetxController {
         'customerName': item.customer.fullName,
         'serviceNames': item.orderDetails.map((e) => e.service.name).toList(),
         'status': item.status,
-        'heroTag': heroTag,
       },
     );
   }

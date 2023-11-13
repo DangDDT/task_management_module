@@ -1,98 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/src/domain/domain.dart';
 import 'package:task_management_module/src/domain/models/task_comment.dart';
 import 'package:task_management_module/src/presentation/shared/circle_avatar_with_error_handler.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
 
-import 'comment_task_controller.dart';
-
-class CommentTaskView extends GetView<CommentTaskViewController> {
+class CommentTaskView extends StatefulWidget {
   final dynamic taskId;
+  final String fullName;
+  final String avatarUrl;
   final List<TaskCommentModel>? items;
+  final Future<void> Function(String comment)? onAddComment;
+
   const CommentTaskView({
     super.key,
-    required this.taskId,
-  }) : items = null;
-
-  const CommentTaskView.items({
-    super.key,
     required this.items,
+    required this.fullName,
+    required this.avatarUrl,
+    this.onAddComment,
   }) : taskId = null;
 
   @override
+  State<CommentTaskView> createState() => _CommentTaskViewState();
+}
+
+class _CommentTaskViewState extends State<CommentTaskView> {
+  final TextEditingController _commentController = TextEditingController();
+  bool isShowAll = false;
+  void setIsShowAll() {
+    setState(() {
+      isShowAll = !isShowAll;
+    });
+  }
+
+  @override
+  dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GetBuilder<CommentTaskViewController>(
-      init: CommentTaskViewController(),
-      tag: 'CommentTaskViewController-${taskId.toString()}',
-      builder: (controller) {
-        return AnimatedSize(
-          duration: const Duration(milliseconds: 410),
-          alignment: Alignment.topCenter,
-          child: Column(
-            children: [
-              _AddCommentTextField(
-                fullName: controller.config.userConfig.fullName,
-                avatarUrl: controller.config.userConfig.avatar,
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 410),
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: [
+          _AddCommentTextField(
+            fullName: widget.fullName,
+            avatarUrl: widget.avatarUrl,
+            commentController: _commentController,
+            onAddComment: widget.onAddComment,
+          ),
+          kGapH8,
+          StateRender<List<TaskCommentModel>, TaskCommentModel>(
+            state: LoadingState.success,
+            data: widget.items ?? [],
+            layoutBuilder: (data, itemBuilder) => _TaskCommentLayoutBuilder(
+              data: data,
+              itemBuilder: itemBuilder,
+              dataDisplay: isShowAll ? data.length : 3,
+            ),
+            itemBuilder: (item, index) => _TaskCommentItemView(
+              item: item,
+            ),
+            isAnimation: true,
+            horizontalSlideOffset: 0.0,
+            verticalSlideOffset: 20.0,
+            duration: const Duration(milliseconds: 410),
+            emptyBuilder: Center(
+              child: Text(
+                'Chưa có trao đổi nào',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: kTheme.colorScheme.primary,
+                    ),
               ),
-              kGapH8,
-              StateRender<List<TaskCommentModel>, TaskCommentModel>(
-                state: LoadingState.success,
-                data: items ?? [],
-                layoutBuilder: (data, itemBuilder) => _TaskCommentLayoutBuilder(
-                  data: data,
-                  itemBuilder: itemBuilder,
-                  dataDisplay: controller.isShowAll.value ? data.length : 3,
-                ),
-                itemBuilder: (item, index) => _TaskCommentItemView(
-                  item: item,
-                ),
-                isAnimation: true,
-                horizontalSlideOffset: 0.0,
-                verticalSlideOffset: 20.0,
-                duration: const Duration(milliseconds: 410),
-                emptyBuilder: Center(
-                  child: Text(
-                    'Chưa có trao đổi nào',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: kTheme.colorScheme.primary,
-                        ),
-                  ),
-                ),
+            ),
+          ),
+          if ((widget.items ?? []).length > 3)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
               ),
-              if ((items ?? []).length > 3)
-                Padding(
+              child: FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 32),
                   padding: const EdgeInsets.symmetric(
                     vertical: 8.0,
                     horizontal: 16.0,
                   ),
-                  child: FilledButton.tonal(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 32),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 16.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    onPressed: () => controller.isShowAll.toggle(),
-                    child: Text(
-                      controller.isShowAll.value
-                          ? 'Thu gọn'
-                          : 'Xem tất cả (${(items ?? []).length})',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: kTheme.colorScheme.primary,
-                          ),
-                    ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-            ],
-          ),
-        );
-      },
+                onPressed: () => setIsShowAll(),
+                child: Text(
+                  isShowAll
+                      ? 'Thu gọn'
+                      : 'Xem tất cả (${(widget.items ?? []).length})',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: kTheme.colorScheme.primary,
+                      ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -100,9 +114,13 @@ class CommentTaskView extends GetView<CommentTaskViewController> {
 class _AddCommentTextField extends StatelessWidget {
   final String fullName;
   final String avatarUrl;
+  final TextEditingController commentController;
+  final Future<void> Function(String comment)? onAddComment;
   const _AddCommentTextField({
     required this.fullName,
     required this.avatarUrl,
+    required this.commentController,
+    required this.onAddComment,
   });
 
   @override
@@ -125,12 +143,13 @@ class _AddCommentTextField extends StatelessWidget {
             fullName: fullName,
           ),
           kGapW12,
-          const Expanded(
+          Expanded(
             child: TextField(
+              controller: commentController,
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 5,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập trao đổi...',
                 border: InputBorder.none,
                 fillColor: Colors.transparent,
@@ -147,7 +166,12 @@ class _AddCommentTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            onPressed: () {},
+            onPressed: () async {
+              if (commentController.text.isNotEmpty) {
+                await onAddComment?.call(commentController.text);
+                commentController.clear();
+              }
+            },
             child: Icon(
               Icons.send,
               size: 16,

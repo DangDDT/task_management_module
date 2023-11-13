@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_preview/image_preview.dart';
 import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/core/utils/helpers/logger.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
@@ -20,7 +21,7 @@ class TaskDetailController extends GetxController {
   late final String customerName;
   late final List<String> serviceNames;
   late final TaskProgressEnum status;
-  late final String? heroTag;
+  late final String? imageEvidenceUrl;
   late final Rx<TaskProgressEnum> statusRx = Rx(status);
 
   @override
@@ -33,8 +34,8 @@ class TaskDetailController extends GetxController {
     taskMasterName = Get.arguments['taskMasterName'] ?? '';
     serviceNames = Get.arguments['serviceNames'] ?? '';
     customerName = Get.arguments['customerName'] ?? '';
+    imageEvidenceUrl = Get.arguments['imageEvidenceUrl'];
     status = Get.arguments?['status'] as TaskProgressEnum;
-    heroTag = Get.arguments?['heroTag'] as String?;
   }
 
   Future<void> onStartTask() async {
@@ -90,5 +91,20 @@ class TaskDetailController extends GetxController {
     if (isCompleteDone) {
       statusRx.value = TaskProgressEnum.done;
     }
+  }
+
+  Future<void> onShowImageEvidence() async {
+    final context = Get.context;
+    if (context == null) {
+      return;
+    }
+    if (imageEvidenceUrl == null || imageEvidenceUrl!.isEmpty) {
+      Toast.showInfo(message: 'Không có hình ảnh báo cáo');
+      return;
+    }
+    openImagesPage(
+      Navigator.of(context),
+      imgUrls: [imageEvidenceUrl!],
+    );
   }
 }

@@ -36,6 +36,7 @@ class ProgressTaskView extends StatelessWidget {
                       title: 'Quản lý công việc',
                     ),
                   );
+                  await controller.loadTaskProgressData();
                 },
                 child: Text(
                   'Quản lý công việc >>',
@@ -93,7 +94,7 @@ class _ProgressCardGridView extends StatelessWidget {
   }
 }
 
-class _TaskProgressCard extends StatelessWidget {
+class _TaskProgressCard extends GetView<ProgressTaskController> {
   final TaskProgressModel item;
   const _TaskProgressCard({required this.item});
 
@@ -129,6 +130,7 @@ class _TaskProgressCard extends StatelessWidget {
             title: title,
           ),
         );
+        await controller.loadTaskProgressData();
       },
       child: Card(
         elevation: 0,
