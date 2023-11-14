@@ -67,8 +67,8 @@ class ListTaskViewController extends GetxController
           : ListTaskTab.defaultTabs.length,
       vsync: this,
     );
-    pagingController.addPageRequestListener((_) {
-      _fetchPage();
+    pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
     });
     searchController.addListener(() {
       if (searchController.text == searchText.value) return;
@@ -107,11 +107,11 @@ class ListTaskViewController extends GetxController
     }
   }
 
-  Future<void> _fetchPage() async {
+  Future<void> _fetchPage(int pageKey) async {
     try {
       final newItems = await _taskService.getTaskWeddings(
         GetTaskWeddingParam(
-          pageIndex: currentPage.value,
+          pageIndex: pageKey,
           pageSize: _pageSize,
           orderBy: 'CreateDate',
           orderType: 'DESC',
@@ -128,7 +128,7 @@ class ListTaskViewController extends GetxController
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
       } else {
-        final nextPageKey = currentPage.value + 1;
+        final nextPageKey = pageKey + newItems.length;
         pagingController.appendPage(newItems, nextPageKey);
       }
       currentPage.value++;
