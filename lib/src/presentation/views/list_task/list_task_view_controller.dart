@@ -121,25 +121,11 @@ class ListTaskViewController extends GetxController
           dueDateTo: null,
           status: selectedTab.value.tabType.isAll
               ? null
-              : [
-                  selectedTab.value.tabType.toCode(),
-                ],
+              : [selectedTab.value.tabType.toCode()],
           taskName:
               searchController.text.isEmpty ? null : searchController.text,
         ),
       );
-      // Dummy.getDummyTasks(
-      //   GetTaskListParam(
-      //     pageSize: _pageSize,
-      //     pageIndex: currentPage.value,
-      //     searchKey: searchController.text,
-      //     duedateFrom: filter.value?.duedate,
-      //     duedateTo: filter.value?.duedate?.add(const Duration(days: 1)),
-      //     taskStatusCodes: [
-      //       selectedTab.value.tabType.toCode(),
-      //     ],
-      //   ),
-      // );
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);

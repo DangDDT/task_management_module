@@ -18,10 +18,9 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       name: entity.taskName ?? DefaultValueMapperConstants.defaultStringValue,
       status: TaskProgressEnum.fromCode(entity.status ?? ''),
 
-      ///Trả về list không phải là 1 object
-      orderDetails: (entity.order?.orderDetails != null)
+      orderDetails: (entity.orderDetails.isNotEmpty)
           ? [
-              for (var item in entity.order!.orderDetails)
+              for (var item in entity.orderDetails)
                 TaskOrderDetailModel(
                   commission: 1.0,
                   quantity: 1,
@@ -68,14 +67,16 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
           .toList(),
 
       customer: TaskCustomerModel(
-        id: entity.order?.customerId ??
+        id: entity.orderDetails[0].order?.customerId ??
             DefaultValueMapperConstants.defaultStringValue,
-        address: entity.order?.customer?.address ??
+        address: entity.orderDetails[0].order?.address ??
             DefaultValueMapperConstants.defaultStringValue,
         avatar: DefaultValueMapperConstants.defaultStringValue,
         email: '',
-        fullName: entity.order?.customer?.fullname ?? '',
-        phoneNumber: entity.order?.customer?.phone ?? '',
+        fullName: entity.orderDetails[0].order?.customer?.fullname ??
+            DefaultValueMapperConstants.defaultStringValue,
+        phoneNumber: entity.orderDetails[0].order?.customer?.phone ??
+            DefaultValueMapperConstants.defaultStringValue,
       ),
 
       evidence: entity.imageEvidence != null
@@ -94,10 +95,9 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       ),
 
       ///Thiếu dữ liệu thời gian tạo và thời gian hết hạn của công việc
-      createdDate:
-          entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
+      createdDate: DefaultValueMapperConstants.defaultDateTimeValue,
       duedate:
-          entity.endDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
+          entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
 
       ///Không hiển thị
 
