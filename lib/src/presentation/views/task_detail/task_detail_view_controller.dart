@@ -67,6 +67,8 @@ class TaskDetailViewController extends GetxController {
       data.comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       taskModel.success(data);
     } catch (e) {
+      Logger.log(e.toString(),
+          name: 'TaskDetailViewController_loadTaskDetailModel()');
       taskModel.error(
         e.toString(),
         errorData: TaskWeddingModel.error(),

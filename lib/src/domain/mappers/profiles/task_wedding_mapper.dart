@@ -17,7 +17,6 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       id: entity.id ?? DefaultValueMapperConstants.defaultStringValue,
       name: entity.taskName ?? DefaultValueMapperConstants.defaultStringValue,
       status: TaskProgressEnum.fromCode(entity.status ?? ''),
-
       orderDetails: (entity.orderDetails.isNotEmpty)
           ? [
               for (var item in entity.orderDetails)
