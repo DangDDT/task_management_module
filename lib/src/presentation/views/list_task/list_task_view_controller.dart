@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -68,8 +67,8 @@ class ListTaskViewController extends GetxController
           : ListTaskTab.defaultTabs.length,
       vsync: this,
     );
-    pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+    pagingController.addPageRequestListener((_) {
+      _fetchPage();
     });
     searchController.addListener(() {
       if (searchController.text == searchText.value) return;
@@ -108,12 +107,11 @@ class ListTaskViewController extends GetxController
     }
   }
 
-  Future<void> _fetchPage(int pageKey) async {
+  Future<void> _fetchPage() async {
     try {
-      await Future.delayed(Duration(seconds: faker.randomGenerator.integer(3)));
       final newItems = await _taskService.getTaskWeddings(
         GetTaskWeddingParam(
-          pageIndex: pageKey,
+          pageIndex: currentPage.value,
           pageSize: _pageSize,
           orderBy: 'CreateDate',
           orderType: 'DESC',
@@ -130,7 +128,7 @@ class ListTaskViewController extends GetxController
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
       } else {
-        final nextPageKey = pageKey + newItems.length;
+        final nextPageKey = currentPage.value + 1;
         pagingController.appendPage(newItems, nextPageKey);
       }
       currentPage.value++;
