@@ -66,18 +66,27 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
           )
           .toList(),
 
-      customer: TaskCustomerModel(
-        id: entity.orderDetails[0].order?.customerId ??
-            DefaultValueMapperConstants.defaultStringValue,
-        address: entity.orderDetails[0].order?.address ??
-            DefaultValueMapperConstants.defaultStringValue,
-        avatar: DefaultValueMapperConstants.defaultStringValue,
-        email: '',
-        fullName: entity.orderDetails[0].order?.customer?.fullname ??
-            DefaultValueMapperConstants.defaultStringValue,
-        phoneNumber: entity.orderDetails[0].order?.customer?.phone ??
-            DefaultValueMapperConstants.defaultStringValue,
-      ),
+      customer: entity.orderDetails.isNotEmpty
+          ? TaskCustomerModel(
+              id: entity.orderDetails[0].order?.customerId ??
+                  DefaultValueMapperConstants.defaultStringValue,
+              address: entity.orderDetails[0].order?.address ??
+                  DefaultValueMapperConstants.defaultStringValue,
+              avatar: DefaultValueMapperConstants.defaultStringValue,
+              email: '',
+              fullName: entity.orderDetails[0].order?.customer?.fullname ??
+                  DefaultValueMapperConstants.defaultStringValue,
+              phoneNumber: entity.orderDetails[0].order?.customer?.phone ??
+                  DefaultValueMapperConstants.defaultStringValue,
+            )
+          : TaskCustomerModel(
+              id: 'Không có dữ liệu',
+              address: 'Không có dữ liệu',
+              avatar: 'Không có dữ liệu',
+              email: 'Không có dữ liệu',
+              fullName: 'Không có dữ liệu',
+              phoneNumber: 'Không có dữ liệu',
+            ),
 
       evidence: entity.imageEvidence != null
           ? ImageEvidenceModel(evidenceValue: entity.imageEvidence!)
