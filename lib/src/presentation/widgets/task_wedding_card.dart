@@ -346,7 +346,7 @@ class TaskWeddingCard extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: 'Ngày thực hiện: ',
+                            text: 'Ngày khách cần: ',
                             style: kTheme.textTheme.bodySmall,
                           ),
                           TextSpan(
