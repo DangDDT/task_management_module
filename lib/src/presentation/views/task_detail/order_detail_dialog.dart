@@ -14,6 +14,9 @@ class OrderDetailDialog extends StatelessWidget {
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       title: const Text('Chi tiết đơn hàng'),
       content: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,9 +87,31 @@ class OrderDetailDialog extends StatelessWidget {
             const Divider(),
             kGapH8,
             _RowData(
-              title: 'Ngày thực hiện',
+              title: 'Ngày giao',
               content: orderDetail.eventDate.toFullString(),
             ),
+            kGapH4,
+            _RowData(
+              title: 'Người nhận',
+              content: orderDetail.fullName.isEmpty
+                  ? 'Chưa có thông tin'
+                  : orderDetail.fullName,
+            ),
+            kGapH4,
+            _RowData(
+              title: 'SĐT người nhận',
+              content: orderDetail.phone.isEmpty
+                  ? 'Chưa có thông tin'
+                  : orderDetail.phone,
+            ),
+            kGapH4,
+            _RowData(
+              title: 'Địa chỉ giao',
+              content: orderDetail.address.isEmpty
+                  ? 'Chưa có thông tin'
+                  : orderDetail.address,
+            ),
+            const Divider(),
             kGapH4,
             _RowData(
               title: 'Tổng tiền cung cấp',
@@ -128,7 +153,9 @@ class OrderDetailDialog extends StatelessWidget {
                 style: kTheme.textTheme.bodyMedium,
                 children: [
                   TextSpan(
-                    text: orderDetail.description,
+                    text: orderDetail.description.isEmpty
+                        ? 'Không có ghi chú'
+                        : orderDetail.description,
                     style: kTheme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.normal,
                     ),

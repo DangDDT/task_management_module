@@ -20,7 +20,7 @@ class TaskCustomerModel {
       id: -1,
       fullName: 'Đang tải...',
       avatar: 'Đang tải...',
-      email: 'Đang tải',
+      email: 'Đang tải...',
       phoneNumber: 'Đang tải...',
       address: 'Đang tải...',
     );

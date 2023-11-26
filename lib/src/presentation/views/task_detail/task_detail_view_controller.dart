@@ -280,6 +280,7 @@ class TaskDetailViewController extends GetxController {
       final data = await _taskService.getTaskWedding(
         id.toString(),
       );
+      data.comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       taskModel.data.value = taskModel.data.value.copyWithComment(
         data.comments,
       );

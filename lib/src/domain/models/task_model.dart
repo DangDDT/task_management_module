@@ -70,7 +70,7 @@ class TaskMasterModel {
 }
 
 class TaskWeddingModel extends BaseTaskModel {
-  final List<TaskOrderDetailModel> orderDetails;
+  final TaskOrderDetailModel orderDetail;
   final TaskCustomerModel customer;
   final EvidenceModel? evidence;
 
@@ -83,7 +83,7 @@ class TaskWeddingModel extends BaseTaskModel {
     required super.taskMaster,
     required super.status,
     required super.comments,
-    required this.orderDetails,
+    required this.orderDetail,
     required this.customer,
     this.evidence,
   });
@@ -98,7 +98,7 @@ class TaskWeddingModel extends BaseTaskModel {
       taskMaster: taskMaster,
       status: status,
       comments: newComments.isEmpty ? comments : newComments,
-      orderDetails: orderDetails,
+      orderDetail: orderDetail,
       customer: customer,
       evidence: evidence,
     );
@@ -114,7 +114,7 @@ class TaskWeddingModel extends BaseTaskModel {
       taskMaster: TaskMasterModel.loading(),
       status: TaskProgressEnum.toDo,
       comments: TaskCommentModel.loadings(),
-      orderDetails: TaskOrderDetailModel.loadings(),
+      orderDetail: TaskOrderDetailModel.loading(),
       customer: TaskCustomerModel.loading(),
     );
   }
@@ -129,7 +129,7 @@ class TaskWeddingModel extends BaseTaskModel {
       taskMaster: TaskMasterModel.error(),
       status: TaskProgressEnum.toDo,
       comments: TaskCommentModel.errors(),
-      orderDetails: TaskOrderDetailModel.errors(),
+      orderDetail: TaskOrderDetailModel.error(),
       customer: TaskCustomerModel.error(),
     );
   }
@@ -144,6 +144,6 @@ class TaskWeddingModel extends BaseTaskModel {
 
   @override
   String toString() {
-    return 'TaskWeddingModel(id: $id, name: $name, description: $description, createdDate: $createdDate, duedate: $duedate, taskMaster: $taskMaster, status: $status, comments: $comments, orderDetails: $orderDetails, customer: $customer, evidence: $evidence)';
+    return 'TaskWeddingModel(id: $id, name: $name, description: $description, createdDate: $createdDate, duedate: $duedate, taskMaster: $taskMaster, status: $status, comments: $comments, orderDetail: $orderDetail, customer: $customer, evidence: $evidence)';
   }
 }

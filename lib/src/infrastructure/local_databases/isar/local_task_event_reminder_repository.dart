@@ -82,6 +82,7 @@ class LocalTaskEventReminderRepository extends LocalTaskEventReminderService {
         final result = _isar.database.taskEventReminders
             .where()
             .filter()
+            .userIdEqualTo(userId)
             .eventAtBetween(
               DateTime(
                 eventAt.year,
@@ -109,6 +110,7 @@ class LocalTaskEventReminderRepository extends LocalTaskEventReminderService {
       final result = _isar.database.taskEventReminders
           .where()
           .filter()
+          .userIdEqualTo(userId)
           .eventAtBetween(
             DateTime(
               eventAt.year,

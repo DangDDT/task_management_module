@@ -17,34 +17,35 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       id: entity.id ?? DefaultValueMapperConstants.defaultStringValue,
       name: entity.taskName ?? DefaultValueMapperConstants.defaultStringValue,
       status: TaskProgressEnum.fromCode(entity.status ?? ''),
-      orderDetails: (entity.orderDetails.isNotEmpty)
-          ? [
-              for (var item in entity.orderDetails)
-                TaskOrderDetailModel(
-                  commission: 1.0,
-                  quantity: 1,
-                  service: TaskServiceModel(
-                    name: item.service?.name ??
-                        DefaultValueMapperConstants.defaultStringValue,
-                    price: item.price?.toDouble() ??
-                        DefaultValueMapperConstants.defaultDoubleValue,
-                    description: item.description ??
-                        DefaultValueMapperConstants.defaultStringValue,
-                    images: item.service?.serviceImages ?? [],
-
-                    ///Thiếu dữ liệu đơn vị tính của dịch vụ
-                    unit: 'dịch vụ',
-                  ),
-                  price: item.price?.toDouble() ??
-                      DefaultValueMapperConstants.defaultDoubleValue,
-                  description: item.description ??
-                      DefaultValueMapperConstants.defaultStringValue,
-                  eventDate: item.startTime ??
-                      DefaultValueMapperConstants.defaultDateTimeValue,
-                )
-            ].toList()
-          : [],
-
+      orderDetail: TaskOrderDetailModel(
+        commission: 1.0,
+        quantity: 1,
+        fullName: entity.orderDetail?.order?.fullname ??
+            DefaultValueMapperConstants.defaultStringValue,
+        address: entity.orderDetail?.order?.address ??
+            DefaultValueMapperConstants.defaultStringValue,
+        phone: entity.orderDetail?.order?.phone ??
+            DefaultValueMapperConstants.defaultStringValue,
+        service: TaskServiceModel(
+          name: entity.orderDetail?.service?.name ??
+              DefaultValueMapperConstants.defaultStringValue,
+          price: entity.orderDetail?.price?.toDouble() ??
+              DefaultValueMapperConstants.defaultDoubleValue,
+          description: entity.orderDetail?.service?.description ??
+              DefaultValueMapperConstants.defaultStringValue,
+          images: (entity.orderDetail?.service?.serviceImages ?? [])
+              .map((e) => e.imageUrl ?? '')
+              .toList(),
+          unit: entity.orderDetail?.service?.unit ??
+              DefaultValueMapperConstants.defaultStringValue,
+        ),
+        price: entity.orderDetail?.price?.toDouble() ??
+            DefaultValueMapperConstants.defaultDoubleValue,
+        description: entity.orderDetail?.description ??
+            DefaultValueMapperConstants.defaultStringValue,
+        eventDate: entity.orderDetail?.startTime ??
+            DefaultValueMapperConstants.defaultDateTimeValue,
+      ),
       comments: entity.comments
           .map(
             (e) => TaskCommentModel(
@@ -64,18 +65,20 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
             ),
           )
           .toList(),
-
-      customer: entity.orderDetails.isNotEmpty
+      customer: entity.orderDetail?.order?.customer != null
           ? TaskCustomerModel(
-              id: entity.orderDetails[0].order?.customerId ??
+              id: entity.orderDetail?.order?.customer?.idNavigation?.id ??
                   DefaultValueMapperConstants.defaultStringValue,
-              address: entity.orderDetails[0].order?.address ??
+              address: entity.orderDetail?.order?.customer?.address ??
                   DefaultValueMapperConstants.defaultStringValue,
-              avatar: DefaultValueMapperConstants.defaultStringValue,
-              email: '',
-              fullName: entity.orderDetails[0].order?.customer?.fullname ??
+              avatar: entity.orderDetail?.order?.customer?.imageUrl ??
                   DefaultValueMapperConstants.defaultStringValue,
-              phoneNumber: entity.orderDetails[0].order?.customer?.phone ??
+              email:
+                  entity.orderDetail?.order?.customer?.idNavigation?.username ??
+                      DefaultValueMapperConstants.defaultStringValue,
+              fullName: entity.orderDetail?.order?.customer?.fullname ??
+                  DefaultValueMapperConstants.defaultStringValue,
+              phoneNumber: entity.orderDetail?.order?.customer?.phone ??
                   DefaultValueMapperConstants.defaultStringValue,
             )
           : TaskCustomerModel(
@@ -86,29 +89,20 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
               fullName: 'Không có dữ liệu',
               phoneNumber: 'Không có dữ liệu',
             ),
-
       evidence: entity.imageEvidence != null
           ? ImageEvidenceModel(evidenceValue: entity.imageEvidence!)
           : null,
-
-      ///Thiếu dữ liệu người tạo công việc
       taskMaster: TaskMasterModel(
         id: '${entity.createBy?.fullname}_${entity.createBy?.phone}',
         avatar: '',
         name: entity.createBy?.fullname ?? '',
         phoneNumber: entity.createBy?.phone ?? '',
-
-        ///Thiếu dữ liệu email của người tạo công việc
         email: '',
       ),
-
-      ///Thiếu dữ liệu thời gian tạo và thời gian hết hạn của công việc
-      createdDate: DefaultValueMapperConstants.defaultDateTimeValue,
+      createdDate:
+          entity.createDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
       duedate:
           entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
-
-      ///Không hiển thị
-
       description: '',
     );
   }

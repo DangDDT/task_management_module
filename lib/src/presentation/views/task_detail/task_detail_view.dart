@@ -159,7 +159,7 @@ class _DataView extends StatelessWidget {
         kGapH8,
         _CustomerSection(item: item),
         kGapH8,
-        if (item.status.isInProgress) ...[
+        if (item.status.isInProgress || item.status.isTodo) ...[
           const Divider(
             height: 16,
             indent: 32,
@@ -168,14 +168,16 @@ class _DataView extends StatelessWidget {
           ),
           const _TaskNoteSection(),
           kGapH16,
-          const Divider(
-            height: 16,
-            indent: 32,
-            thickness: 2.0,
-            endIndent: 32,
-          ),
-          _TaskReminderSection(item: item),
-          kGapH16,
+          if (item.duedate.lastTimeOfDate().isAfter(DateTime.now())) ...[
+            const Divider(
+              height: 16,
+              indent: 32,
+              thickness: 2.0,
+              endIndent: 32,
+            ),
+            _TaskReminderSection(item: item),
+            kGapH16,
+          ],
         ],
         if (item.status.isInProgress ||
             item.status.isTodo ||
@@ -491,7 +493,7 @@ class _TaskOrderDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final count = item.orderDetails.length;
+    final count = [item.orderDetail].length;
     final isShowCount = count > 1;
     return Column(
       children: [
@@ -516,29 +518,29 @@ class _TaskOrderDetailsSection extends StatelessWidget {
           ),
         ),
         kGapH12,
-        if (item.orderDetails.length == 1)
+        if ([item.orderDetail].length == 1)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               height: 200,
               child: _OrderDetailCard(
-                taskOrderDetail: item.orderDetails.first,
+                taskOrderDetail: [item.orderDetail].first,
                 index: 0,
                 isFullWidth: true,
                 isShowCount: false,
               ),
             ),
           ),
-        if (item.orderDetails.length > 1)
+        if ([item.orderDetail].length > 1)
           SizedBox(
             height: 200,
             width: double.infinity,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
-              itemCount: item.orderDetails.length,
+              itemCount: [item.orderDetail].length,
               itemBuilder: (context, index) {
-                final taskOrderDetail = item.orderDetails[index];
+                final taskOrderDetail = [item.orderDetail][index];
                 return _OrderDetailCard(
                   taskOrderDetail: taskOrderDetail,
                   index: index,
@@ -633,7 +635,7 @@ class _OrderDetailCard extends GetView<TaskDetailViewController> {
             const Divider(),
             _RowServiceData(
               icon: Icons.attach_money,
-              title: 'Doanh thu dự kiến',
+              title: 'Doanh thu',
               content: taskOrderDetail.revenue.toInt().toVietNamCurrency(),
               titleStyle: kTheme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -873,7 +875,9 @@ class _CustomerSection extends GetView<TaskDetailViewController> {
                         _RowServiceData(
                           icon: Icons.email,
                           title: 'Email',
-                          content: item.customer.email,
+                          content: item.customer.email.isEmpty
+                              ? '< Không có dữ liệu >'
+                              : item.customer.email,
                         ),
                         kGapH8,
                         _RowServiceData(
@@ -915,32 +919,39 @@ class _RowServiceData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              color: kTheme.colorScheme.primary,
-              size: 18,
-            ),
-            kGapW8,
-            Text(
-              title,
-              style: titleStyle ??
-                  kTheme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: kTheme.colorScheme.onBackground,
-                  ),
-            ),
-          ],
-        ),
-        Text(
-          content,
-          style: contentStyle ??
-              kTheme.textTheme.titleSmall?.copyWith(
-                color: contentColor ?? kTheme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
+        Flexible(
+          flex: 1,
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: kTheme.colorScheme.primary,
+                size: 18,
               ),
+              kGapW8,
+              Text(
+                title,
+                style: titleStyle ??
+                    kTheme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        Flexible(
+          child: Text(
+            content,
+            textAlign: TextAlign.end,
+            style: contentStyle ??
+                kTheme.textTheme.titleSmall?.copyWith(
+                  color: contentColor ?? kTheme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ),
       ],
     );

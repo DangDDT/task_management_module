@@ -156,10 +156,10 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
       duedate: task.duedate,
       taskMasterName: task.taskMaster?.name ?? '',
       customerName: task.customer.fullName,
-      serviceNames: task.orderDetails.map((e) => e.service.name).toList(),
+      serviceNames: [task.orderDetail].map((e) => e.service.name).toList(),
       status: task.status,
       config: TaskServiceCardViewConfig(
-        isShowCustomerName: true,
+        isShowCustomerName: false,
         isShowFullName: true,
         isShowServiceName: true,
         isShowStatus: true,

@@ -16,10 +16,12 @@ class TaskServiceCardViewConfig {
   final bool isShowFullDescription;
   final bool isShowCustomerName;
   final bool isShowServiceName;
+  final bool isShowCountDown;
   final ActionConfig? actionConfig;
   final bool isShowStatus;
   final TextStyle? taskNameStyle;
   final Color? taskCardColor;
+  final bool isShowExpiredTag;
   const TaskServiceCardViewConfig({
     this.isShowDescription = true,
     this.isShowDueDate = true,
@@ -29,10 +31,12 @@ class TaskServiceCardViewConfig {
     this.isShowCustomerName = false,
     this.isShowFullDescription = false,
     this.actionConfig,
+    this.isShowCountDown = true,
     this.isShowStatus = false,
     this.isShowServiceName = false,
     this.taskNameStyle,
     this.taskCardColor,
+    this.isShowExpiredTag = false,
   });
 }
 
@@ -69,8 +73,10 @@ class TaskWeddingCard extends StatelessWidget {
         duedate = item?.duedate ?? DateTime.now(),
         customerName = item?.customer.fullName ?? '',
         taskMasterName = item?.taskMaster?.name ?? '',
-        serviceNames = item?.orderDetails.map((e) => e.service.name).toList() ??
-            <String>[],
+        serviceNames =
+            item?.orderDetail != null && item?.orderDetail.service != null
+                ? [item?.orderDetail].map((e) => e!.service.name).toList()
+                : <String>[],
         status = item?.status ?? TaskProgressEnum.toDo;
 
   final TaskWeddingModel? item;
@@ -86,7 +92,7 @@ class TaskWeddingCard extends StatelessWidget {
   final TaskServiceCardViewConfig config;
 
   Future<void> showActionDialog() async {
-    return await Get.bottomSheet(
+    await Get.bottomSheet(
       Container(
         height: (config.actionConfig?.actions.length.toDouble() ?? 1) * 56.0,
         decoration: BoxDecoration(
@@ -117,6 +123,7 @@ class TaskWeddingCard extends StatelessWidget {
                         style: kTheme.textTheme.titleMedium,
                       ),
                       onTap: () async {
+                        Get.back();
                         await e.onTap.call();
                       },
                     )) ??
@@ -148,48 +155,69 @@ class TaskWeddingCard extends StatelessWidget {
             padding: config.isFilled
                 ? const EdgeInsets.all(16.0)
                 : const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        name,
-                        style: config.taskNameStyle ??
-                            kTheme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: config.isFilled
-                                  ? kTheme.colorScheme.onBackground
-                                  : kTheme.colorScheme.primary,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Text(
+                      name,
+                      style: config.taskNameStyle ??
+                          kTheme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: config.isFilled
+                                ? kTheme.colorScheme.onBackground
+                                : kTheme.colorScheme.primary,
+                          ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (config.actionConfig != null) ...[
+                    kGapW8,
+                    GestureDetector(
+                      onTap: showActionDialog,
+                      child: Icon(
+                        Icons.more_horiz,
+                        color: kTheme.colorScheme.primary,
                       ),
                     ),
-                    if (config.actionConfig != null) ...[
-                      kGapW8,
-                      GestureDetector(
-                        onTap: showActionDialog,
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: kTheme.colorScheme.primary,
-                        ),
-                      ),
-                    ],
                   ],
-                ),
-                if (config.isShowStatus) ...[
-                  kGapH8,
-                  Row(
-                    children: [
+                ],
+              ),
+              if (config.isShowStatus) ...[
+                kGapH8,
+                Row(
+                  children: [
+                    CustomChip(
+                      icon: Icon(status.icon, size: 16.0, color: status.color),
+                      title: status.name,
+                      color: status.color,
+                      textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                        color: kTheme.colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 4.0,
+                      ),
+                    ),
+                    if (config.isShowExpiredTag &&
+                        duedate.lastTimeOfDate().isBefore(
+                              DateTime.now(),
+                            ) &&
+                        (!status.isDone && !status.isExpected)) ...[
+                      kGapW4,
                       CustomChip(
-                        icon:
-                            Icon(status.icon, size: 16.0, color: status.color),
-                        title: status.name,
-                        color: status.color,
+                        icon: const Icon(
+                          Icons.warning_amber_rounded,
+                          size: 16.0,
+                          color: Colors.red,
+                        ),
+                        title: 'Quá hạn hoàn thành',
+                        color: Colors.red,
                         textStyle: kTheme.textTheme.bodySmall?.copyWith(
                           color: kTheme.colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
@@ -199,137 +227,138 @@ class TaskWeddingCard extends StatelessWidget {
                           vertical: 4.0,
                         ),
                       ),
-                    ],
-                  ),
-                ],
-                if (config.isShowDescription) ...[
-                  kGapH8,
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Mô tả: ',
-                          style: kTheme.textTheme.bodySmall,
-                        ),
-                        TextSpan(
-                          text: description,
-                          style: kTheme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                if (config.isShowFullName &&
-                    taskMasterName.isNotNullOrEmpty) ...[
-                  kGapH4,
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Người giao: ',
-                          style: kTheme.textTheme.bodySmall,
-                        ),
-                        TextSpan(
-                          text: taskMasterName,
-                          style: kTheme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ] else
-                  kGapH8,
-                if (config.isShowCustomerName) ...[
-                  kGapH4,
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Khách hàng: ',
-                          style: kTheme.textTheme.bodySmall,
-                        ),
-                        TextSpan(
-                          text: customerName,
-                          style: kTheme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                if (config.isShowServiceName) ...[
-                  kGapH12,
-                  Wrap(
-                    runSpacing: 4.0,
-                    spacing: 4.0,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                    ]
+                  ],
+                ),
+              ],
+              if (config.isShowDescription) ...[
+                kGapH8,
+                Text.rich(
+                  TextSpan(
                     children: [
-                      ...serviceNames
-                          .take(2)
-                          .map(
-                            (name) => CustomChip(
-                              constraints: BoxConstraints(
-                                maxWidth: serviceNames.length > 2
-                                    ? context.width * 0.3
-                                    : context.width * 0.5,
-                              ),
-                              title: name,
-                              fillColor: true,
-                              color: kTheme.colorScheme.primary,
-                              textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                                color: kTheme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                                vertical: 4.0,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      if (serviceNames.length > 2) ...[
-                        kGapW4,
-                        CustomChip(
-                          title: '+${serviceNames.length - 2} dịch vụ',
-                          color: kTheme.colorScheme.primary.withOpacity(0.2),
-                          textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                            color: kTheme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                        ),
-                      ]
-                    ],
-                  ),
-                ],
-                if (config.isShowDueDate) ...[
-                  kGapH12,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Hạn chót: ',
-                              style: kTheme.textTheme.bodySmall,
-                            ),
-                            TextSpan(
-                              text: duedate.toReadable(),
-                              style: kTheme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      TextSpan(
+                        text: 'Mô tả: ',
+                        style: kTheme.textTheme.bodySmall,
+                      ),
+                      TextSpan(
+                        text: description,
+                        style: kTheme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ],
+                  ),
+                ),
+              ],
+              if (config.isShowFullName && taskMasterName.isNotNullOrEmpty) ...[
+                kGapH4,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Người tạo công việc: ',
+                        style: kTheme.textTheme.bodySmall,
+                      ),
+                      TextSpan(
+                        text: taskMasterName,
+                        style: kTheme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                kGapH8,
+              ] else
+                kGapH8,
+              if (config.isShowCustomerName) ...[
+                kGapH4,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Khách hàng: ',
+                        style: kTheme.textTheme.bodySmall,
+                      ),
+                      TextSpan(
+                        text: customerName,
+                        style: kTheme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              if (config.isShowServiceName) ...[
+                Wrap(
+                  runSpacing: 4.0,
+                  spacing: 4.0,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    ...serviceNames
+                        .take(2)
+                        .map(
+                          (name) => CustomChip(
+                            constraints: BoxConstraints(
+                              maxWidth: serviceNames.length > 2
+                                  ? context.width * 0.3
+                                  : context.width * 0.5,
+                            ),
+                            title: name,
+                            fillColor: true,
+                            color: kTheme.colorScheme.primary,
+                            textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                              color: kTheme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 4.0,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    if (serviceNames.length > 2) ...[
+                      kGapW4,
+                      CustomChip(
+                        title: '+${serviceNames.length - 2} dịch vụ',
+                        color: kTheme.colorScheme.primary.withOpacity(0.2),
+                        textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                          color: kTheme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 4.0,
+                        ),
+                      ),
+                    ]
+                  ],
+                ),
+              ],
+              if (config.isShowDueDate) ...[
+                kGapH12,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Ngày thực hiện: ',
+                            style: kTheme.textTheme.bodySmall,
+                          ),
+                          TextSpan(
+                            text: duedate.toFullString(),
+                            style: kTheme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (config.isShowCountDown) ...[
                       kGapW4,
                       Text(
                         '(${duedate.toReadableDueDateWithHourString()})',
@@ -339,11 +368,11 @@ class TaskWeddingCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                ] else
-                  const SizedBox.shrink(),
-              ],
-            ),
+                  ],
+                ),
+              ] else
+                const SizedBox.shrink(),
+            ]),
           ),
         ),
       ),

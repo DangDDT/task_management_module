@@ -29,9 +29,13 @@ extension DateTimeExt on DateTime {
       day,
     );
     if (isSameDate(toDay)) {
-      return 'Hôm nay lúc ${DateFormat.Hm().format(this)}';
+      return 'Hôm nay';
     }
-    final hours = data.difference(toDay).inHours.abs();
+    final hours = data.difference(toDay).inHours;
+    if (hours < 0) {
+      final days = hours ~/ 24;
+      return 'Quá hạn ${days.abs().toString()} ngày ${hours % 24} giờ';
+    }
     final days = hours ~/ 24;
     return "Còn $days ngày ${hours % 24} giờ";
   }

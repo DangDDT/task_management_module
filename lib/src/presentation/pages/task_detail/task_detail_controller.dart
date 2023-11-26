@@ -6,6 +6,7 @@ import 'package:task_management_module/core/utils/helpers/logger.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/requests/put_status_task_body.dart';
 import 'package:task_management_module/src/domain/services/task_service.dart';
+import 'package:task_management_module/src/presentation/pages/complete_task/complete_task_controller.dart';
 import 'package:task_management_module/src/presentation/shared/toast.dart';
 
 class TaskDetailController extends GetxController {
@@ -21,7 +22,7 @@ class TaskDetailController extends GetxController {
   late final String customerName;
   late final List<String> serviceNames;
   late final TaskProgressEnum status;
-  late final String? imageEvidenceUrl;
+  late final Rx<String>? imageEvidenceUrl;
   late final Rx<TaskProgressEnum> statusRx = Rx(status);
 
   @override
@@ -34,7 +35,7 @@ class TaskDetailController extends GetxController {
     taskMasterName = Get.arguments['taskMasterName'] ?? '';
     serviceNames = Get.arguments['serviceNames'] ?? '';
     customerName = Get.arguments['customerName'] ?? '';
-    imageEvidenceUrl = Get.arguments['imageEvidenceUrl'];
+    imageEvidenceUrl = Rx(Get.arguments['imageEvidenceUrl'] ?? '');
     status = Get.arguments?['status'] as TaskProgressEnum;
   }
 
@@ -84,12 +85,13 @@ class TaskDetailController extends GetxController {
       arguments: {
         'taskId': taskId,
       },
-    );
+    ) as ReturnCompleteTask?;
     if (isCompleteDone == null) {
       return;
     }
-    if (isCompleteDone) {
+    if (isCompleteDone.isCompleteDone) {
       statusRx.value = TaskProgressEnum.done;
+      imageEvidenceUrl!.value = isCompleteDone.imageEvidenceUrl ?? '';
     }
   }
 
@@ -104,7 +106,7 @@ class TaskDetailController extends GetxController {
     }
     openImagesPage(
       Navigator.of(context),
-      imgUrls: [imageEvidenceUrl!],
+      imgUrls: [imageEvidenceUrl!.value],
     );
   }
 }

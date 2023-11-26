@@ -7,6 +7,7 @@ import 'package:task_management_module/src/domain/enums/private/task_categories_
 import 'package:task_management_module/src/domain/requests/get_task_wedding_param.dart';
 import 'package:task_management_module/src/domain/requests/put_status_task_body.dart';
 import 'package:task_management_module/src/domain/services/task_service.dart';
+import 'package:task_management_module/src/presentation/pages/complete_task/complete_task_controller.dart';
 import 'package:task_management_module/src/presentation/shared/toast.dart';
 
 import '../../../../core/core.dart';
@@ -41,6 +42,11 @@ class ListTaskViewController extends GetxController
     TaskProgressEnum.toDo,
     TaskProgressEnum.inProgress,
     TaskProgressEnum.done,
+  ];
+
+  final List<TaskProgressEnum> taskWillShowCountDown = [
+    TaskProgressEnum.toDo,
+    TaskProgressEnum.inProgress,
   ];
 
   ///Controllers
@@ -113,10 +119,10 @@ class ListTaskViewController extends GetxController
         GetTaskWeddingParam(
           pageIndex: pageKey,
           pageSize: _pageSize,
-          orderBy: 'CreateDate',
+          orderBy: 'StartDate',
           orderType: 'DESC',
-          dueDateFrom: null,
-          dueDateTo: null,
+          startDateFrom: null,
+          startDateTo: null,
           status: selectedTab.value.tabType.isAll
               ? null
               : [selectedTab.value.tabType.toCode()],
@@ -160,7 +166,7 @@ class ListTaskViewController extends GetxController
         'duedate': item.duedate,
         'taskMasterName': item.taskMaster?.name,
         'customerName': item.customer.fullName,
-        'serviceNames': item.orderDetails.map((e) => e.service.name).toList(),
+        'serviceNames': [item.orderDetail].map((e) => e.service.name).toList(),
         'status': item.status,
         'imageEvidenceUrl':
             item.evidence != null ? item.evidence!.evidenceValue : null,
@@ -215,12 +221,13 @@ class ListTaskViewController extends GetxController
       arguments: {
         'taskId': taskId,
       },
-    );
+    ) as ReturnCompleteTask?;
     if (isCompleteDone == null) {
       return;
     }
-    if (isCompleteDone) {
+    if (isCompleteDone.isCompleteDone) {
       await onRefreshList();
+      Get.back();
     }
   }
 }

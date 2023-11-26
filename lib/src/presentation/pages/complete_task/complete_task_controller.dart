@@ -92,7 +92,11 @@ class CompleteTaskController extends GetxController {
         );
         return;
       }
-      Get.back(result: true);
+      Get.back(
+          result: ReturnCompleteTask(
+        isCompleteDone: true,
+        imageEvidenceUrl: uploadedFile.first.link,
+      ));
       Toast.showSuccess(
         message: 'Báo cáo công việc thành công',
       );
@@ -104,6 +108,16 @@ class CompleteTaskController extends GetxController {
       );
     }
   }
+}
+
+class ReturnCompleteTask {
+  final bool isCompleteDone;
+  final String? imageEvidenceUrl;
+
+  ReturnCompleteTask({
+    required this.isCompleteDone,
+    required this.imageEvidenceUrl,
+  });
 }
 
 class ImageEvidence {

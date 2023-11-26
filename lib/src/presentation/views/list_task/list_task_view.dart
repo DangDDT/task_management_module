@@ -190,7 +190,8 @@ class _TaskListBuilder extends GetView<ListTaskViewController> {
     return RefreshIndicator(
       onRefresh: controller.onRefreshList,
       child: PagedListView<int, TaskWeddingModel>.separated(
-        physics: const BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
         pagingController: controller.pagingController,
         scrollController: controller.scrollController,
         shrinkWrap: true,
@@ -225,14 +226,17 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
         item: item,
         config: TaskServiceCardViewConfig(
           isShowDescription: false,
-          isShowDueDate: false,
-          //  controller.taskWillShowDueDate.contains(item.status),
+          isShowDueDate: true,
+          // controller.taskWillShowDueDate.contains(item.status),
           isShowTag: true,
-          isShowFullName: false,
+          isShowFullName: true,
           isShowFullDescription: true,
           isShowStatus: true,
           isShowServiceName: true,
           isShowCustomerName: false,
+          isShowExpiredTag: true,
+          isShowCountDown:
+              controller.taskWillShowCountDown.contains(item.status),
           taskCardColor:
               item.status.isExpected ? Colors.black12.withOpacity(.05) : null,
           actionConfig: controller.taskWillShowActions.contains(item.status)

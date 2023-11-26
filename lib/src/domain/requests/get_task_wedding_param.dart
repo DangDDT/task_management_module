@@ -1,8 +1,8 @@
 import 'get_param.dart';
 
 class GetTaskWeddingParam extends GetParam {
-  final DateTime? dueDateFrom;
-  final DateTime? dueDateTo;
+  final DateTime? startDateFrom;
+  final DateTime? startDateTo;
   final List<String>? status;
   final String? taskName;
 
@@ -11,8 +11,8 @@ class GetTaskWeddingParam extends GetParam {
     required super.pageSize,
     required super.orderBy,
     required super.orderType,
-    this.dueDateFrom,
-    this.dueDateTo,
+    this.startDateFrom,
+    this.startDateTo,
     this.status,
     this.taskName,
   });

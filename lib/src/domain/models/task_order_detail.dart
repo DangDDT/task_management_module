@@ -11,11 +11,18 @@ class TaskOrderDetailModel {
   ///Phần trăm chiết khấu cho cửa hàng
   final double commission;
 
+  final String fullName;
+  final String address;
+  final String phone;
+
   final String description;
 
   TaskOrderDetailModel({
     required this.service,
     required this.quantity,
+    required this.fullName,
+    required this.address,
+    required this.phone,
     required this.price,
     required this.eventDate,
     required this.commission,
@@ -30,6 +37,9 @@ class TaskOrderDetailModel {
       eventDate: DateTime.now(),
       commission: 0,
       description: 'Đang tải',
+      fullName: 'Đang tải',
+      address: 'Đang tải',
+      phone: 'Đang tải',
     );
   }
 
@@ -40,7 +50,10 @@ class TaskOrderDetailModel {
       price: 0,
       eventDate: DateTime.now(),
       commission: 0,
-      description: 'Đã có lỗi xảy ra',
+      description: 'Có lỗi xảy ra',
+      fullName: 'Có lỗi xảy ra',
+      address: 'Có lỗi xảy ra',
+      phone: 'Có lỗi xảy ra',
     );
   }
 

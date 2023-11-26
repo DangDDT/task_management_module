@@ -7,6 +7,7 @@ import 'package:task_management_module/src/domain/enums/private/task_categories_
 import 'package:task_management_module/src/domain/requests/get_task_wedding_param.dart';
 import 'package:task_management_module/src/domain/requests/put_status_task_body.dart';
 import 'package:task_management_module/src/domain/services/task_service.dart';
+import 'package:task_management_module/src/presentation/pages/complete_task/complete_task_controller.dart';
 import 'package:task_management_module/src/presentation/shared/toast.dart';
 
 import '../../../../core/utils/helpers/logger.dart';
@@ -40,15 +41,15 @@ class TaskAlmostDueController extends GetxController {
         GetTaskWeddingParam(
           pageSize: null,
           pageIndex: null,
-          dueDateFrom: DateTime.now().firstTimeOfDate(),
-          dueDateTo:
-              DateTime.now().add(const Duration(days: 7)).lastTimeOfDate(),
+          startDateFrom: DateTime.now().firstTimeOfDate(),
+          startDateTo: DateTime.now().lastTimeOfDate(),
           orderBy: null,
           orderType: null,
           taskName: null,
           status: [
             TaskProgressEnum.toDo.toCode(),
             TaskProgressEnum.inProgress.toCode(),
+            TaskProgressEnum.done.toCode(),
           ],
         ),
       );
@@ -88,7 +89,7 @@ class TaskAlmostDueController extends GetxController {
         'duedate': item.duedate,
         'taskMasterName': item.taskMaster?.name,
         'customerName': item.customer.fullName,
-        'serviceNames': item.orderDetails.map((e) => e.service.name).toList(),
+        'serviceNames': [item.orderDetail].map((e) => e.service.name).toList(),
         'status': item.status,
       },
     );
@@ -140,11 +141,11 @@ class TaskAlmostDueController extends GetxController {
       arguments: {
         'taskId': taskId,
       },
-    );
+    ) as ReturnCompleteTask?;
     if (isCompleteDone == null) {
       return;
     }
-    if (isCompleteDone) {
+    if (isCompleteDone.isCompleteDone) {
       await loadTaskProgressData();
     }
   }

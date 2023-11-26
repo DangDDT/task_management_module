@@ -68,7 +68,7 @@ class _CalendarWidget extends GetView<TaskReminderController> {
     return Obx(
       () {
         final startDate = controller.taskModel.createdDate;
-        final endDate = controller.taskModel.duedate;
+        final endDate = controller.taskModel.duedate.lastTimeOfDate();
         return TableCalendar(
           daysOfWeekHeight: 48,
           firstDay: controller.taskModel.createdDate,
@@ -258,19 +258,24 @@ class _EventBuilder extends GetView<TaskReminderController> {
                 ],
               ),
             ),
-            trailing: FilledButton.tonal(
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.square(28),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(8),
-              ),
-              onPressed: controller.onAddTaskEvent,
-              child: Icon(
-                Icons.add,
-                color: kTheme.colorScheme.primary,
-                size: 18,
-              ),
-            ),
+            trailing: !controller.selectedDate.value.isBetween(
+              DateTime.now(),
+              controller.taskModel.duedate.lastTimeOfDate(),
+            )
+                ? null
+                : FilledButton.tonal(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.square(28),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(8),
+                    ),
+                    onPressed: controller.onAddTaskEvent,
+                    child: Icon(
+                      Icons.add,
+                      color: kTheme.colorScheme.primary,
+                      size: 18,
+                    ),
+                  ),
           ),
           Obx(
             () {
