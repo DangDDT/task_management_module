@@ -10,7 +10,8 @@ class ModuleConfig {
     this.onCreateLocalNotificationCallback,
   })  : _userConfig = null,
         _authConfig = null,
-        tabsInTaskView = null;
+        tabsInTaskView = null,
+        _myCategoryIdCallback = null;
 
   final bool isShowLog;
 
@@ -50,6 +51,14 @@ class ModuleConfig {
   OnCreateLocalNotifyCallback? onCreateLocalNotificationCallback;
 
   List<ListTaskTab>? tabsInTaskView;
+
+  OnGetMyCategoryIdCallback? _myCategoryIdCallback;
+  OnGetMyCategoryIdCallback? get getMyCategoryIdCallback =>
+      _myCategoryIdCallback;
+  set setGetMyCategoryCallback(
+    OnGetMyCategoryIdCallback? myCategoryIdCallback,
+  ) =>
+      _myCategoryIdCallback = myCategoryIdCallback;
 }
 
 class BaseUrlConfig {
@@ -99,3 +108,4 @@ typedef OnCreateLocalNotifyCallback = Future<void> Function(
   String body,
   DateTime at,
 );
+typedef OnGetMyCategoryIdCallback = Future<String> Function();

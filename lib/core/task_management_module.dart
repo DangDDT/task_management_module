@@ -22,7 +22,6 @@ class TaskManagementModule {
     OnCreateLocalNotifyCallback? onCreateLocalNotificationCallback,
   }) async {
     await IsarDatabase.init();
-
     await GlobalBinding.setUpLocator(
       isShowLog: isShowLog,
       baseUrlConfig: baseUrlConfig,
@@ -43,11 +42,14 @@ class TaskManagementModule {
     required UserConfig userConfig,
     AuthConfig? authConfig,
     List<ListTaskTab>? listTaskTabs,
+    OnGetMyCategoryIdCallback? myCategoryIdCallback,
   }) async {
     _assertInitialized();
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = userConfig;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = authConfig;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = listTaskTabs;
+    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setGetMyCategoryCallback =
+        myCategoryIdCallback;
   }
 
   static Future<void> logout() async {
@@ -55,5 +57,7 @@ class TaskManagementModule {
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = null;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = null;
     Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = null;
+    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setGetMyCategoryCallback =
+        null;
   }
 }

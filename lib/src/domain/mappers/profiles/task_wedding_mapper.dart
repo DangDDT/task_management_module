@@ -46,7 +46,7 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
         eventDate: entity.orderDetail?.startTime ??
             DefaultValueMapperConstants.defaultDateTimeValue,
       ),
-      comments: entity.comments
+      comments: (entity.comments ?? [])
           .map(
             (e) => TaskCommentModel(
               id: e.id ?? DefaultValueMapperConstants.defaultStringValue,

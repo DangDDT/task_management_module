@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/src/domain/domain.dart';
 import 'package:task_management_module/src/domain/models/task_model.dart';
 import 'package:task_management_module/src/domain/models/task_progress_model.dart';
@@ -21,8 +22,10 @@ class TaskService extends ITaskService {
   final IStatisticRepository _statisticRepository = Get.find();
   final ITaskRepository _taskRepository = Get.find();
   final IFileRepository _fileRepository = Get.find();
+  final ICategoryRepository _categoryRepository = Get.find();
   final ICommentRepository _commentRepository = Get.find();
   final Mapper _mapper = Mapper.instance;
+  final ModuleConfig _moduleConfig = Get.find(tag: ModuleConfig.tag);
 
   @override
   Future<List<TaskProgressModel>> getTaskProgress(
@@ -61,7 +64,19 @@ class TaskService extends ITaskService {
 
   @override
   Future<TaskWeddingModel> getTaskWedding(String id) async {
-    final result = await _taskRepository.getTask(id: id);
+    final resultTemp = await _taskRepository.getTask(id: id);
+    final categoryId = await _moduleConfig.getMyCategoryIdCallback!();
+    final category = await _categoryRepository.getCategory(id: categoryId);
+    final result = resultTemp.copyWithCategory(
+      id: id,
+      categoryCode:
+          category.id ?? DefaultValueMapperConstants.defaultStringValue,
+      name: category.name ?? DefaultValueMapperConstants.defaultStringValue,
+      description: category.description ??
+          DefaultValueMapperConstants.defaultStringValue,
+      commissionRate: category.commission?.commisionValue ??
+          DefaultValueMapperConstants.defaultDoubleValue,
+    );
     return _mapper.mapData<Task, TaskWeddingModel>(result);
   }
 
