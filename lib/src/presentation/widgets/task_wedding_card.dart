@@ -175,7 +175,7 @@ class TaskWeddingCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (config.actionConfig != null) ...[
+                  if (config.actionConfig?.actions.isNotEmpty ?? false) ...[
                     kGapW8,
                     GestureDetector(
                       onTap: showActionDialog,
@@ -291,6 +291,7 @@ class TaskWeddingCard extends StatelessWidget {
                 ),
               ],
               if (config.isShowServiceName) ...[
+                kGapH8,
                 Wrap(
                   runSpacing: 4.0,
                   spacing: 4.0,

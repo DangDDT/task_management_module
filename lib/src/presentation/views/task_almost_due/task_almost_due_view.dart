@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management_module/src/presentation/shared/custom_chip.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
 
 import '../../../../core/core.dart';
@@ -54,7 +55,55 @@ class TaskAlmostDueView extends StatelessWidget {
                 ],
               ),
             ),
-            kGapH4,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: kTheme.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: kTheme.colorScheme.primary,
+                  ),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  title: const Text('Ngày'),
+                  leading: const Icon(Icons.calendar_today_rounded),
+                  subtitle: const Text('Chọn ngày'),
+                  trailing: Obx(
+                    () => CustomChip(
+                      title: controller.selectedDate.value.day ==
+                              DateTime.now().day
+                          ? 'Hôm nay'
+                          : controller.selectedDate.value.day ==
+                                  DateTime.now()
+                                      .add(const Duration(days: 1))
+                                      .day
+                              ? 'Ngày mai'
+                              : controller.selectedDate.value.day ==
+                                      DateTime.now()
+                                          .subtract(const Duration(days: 1))
+                                          .day
+                                  ? 'Hôm qua'
+                                  : controller.selectedDate.value
+                                      .toDateReadable(),
+                    ),
+                  ),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: controller.selectedDate.value,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    controller.onChangeDate(date);
+                  },
+                ),
+              ),
+            ),
+            kGapH12,
             Obx(
               () => StateRender<List<TaskWeddingModel>, TaskWeddingModel>(
                 state: controller.taskModels.state.value,
@@ -112,6 +161,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
                 color: Colors.grey,
               ),
             ),
+            kGapH24,
           ],
         ),
       );
@@ -124,7 +174,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
       },
       options: CarouselOptions(
         viewportFraction: 0.9,
-        enableInfiniteScroll: true,
+        enableInfiniteScroll: false,
         enlargeCenterPage: true,
         enlargeFactor: 1.2,
         autoPlay: true,
@@ -159,7 +209,7 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
       serviceNames: [task.orderDetail].map((e) => e.service.name).toList(),
       status: task.status,
       config: TaskServiceCardViewConfig(
-        isShowCustomerName: false,
+        isShowCustomerName: true,
         isShowFullName: false,
         isShowServiceName: true,
         isShowStatus: true,

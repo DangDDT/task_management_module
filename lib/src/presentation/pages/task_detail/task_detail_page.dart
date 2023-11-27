@@ -64,7 +64,8 @@ class TaskDetailPage extends GetView<TaskDetailController> {
                 case TaskProgressEnum.done:
                   return _ImageEvidenceButton(
                     onPressed: controller.onShowImageEvidence,
-                    isEnable: controller.imageEvidenceUrl != null,
+                    isEnable: controller.imageEvidenceUrl?.value != null &&
+                        controller.imageEvidenceUrl!.value.isNotEmpty,
                   );
                 default:
                   return const SizedBox(width: 0);

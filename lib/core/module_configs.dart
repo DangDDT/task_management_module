@@ -1,5 +1,7 @@
 // // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:convert';
+
 import 'task_management_module.dart';
 
 class ModuleConfig {
@@ -11,7 +13,8 @@ class ModuleConfig {
   })  : _userConfig = null,
         _authConfig = null,
         tabsInTaskView = null,
-        _myCategoryIdCallback = null;
+        _myCategoryIdCallback = null,
+        _viewByRoleConfig = null;
 
   final bool isShowLog;
 
@@ -59,6 +62,15 @@ class ModuleConfig {
     OnGetMyCategoryIdCallback? myCategoryIdCallback,
   ) =>
       _myCategoryIdCallback = myCategoryIdCallback;
+
+  ViewByRoleConfig? _viewByRoleConfig;
+  ViewByRoleConfig? get viewByRoleConfig {
+    return _viewByRoleConfig;
+  }
+
+  set setViewByRoleConfig(ViewByRoleConfig? viewConfig) {
+    _viewByRoleConfig = viewConfig;
+  }
 }
 
 class BaseUrlConfig {
@@ -78,6 +90,60 @@ class UserConfig {
     required this.fullName,
     required this.avatar,
   });
+}
+
+class ViewByRoleConfig {
+  final bool isShowComissionValue;
+  final bool isShowRevenueValue;
+  ViewByRoleConfig({
+    this.isShowComissionValue = true,
+    this.isShowRevenueValue = true,
+  });
+
+  ViewByRoleConfig copyWith({
+    bool? isShowComissionValue,
+    bool? isShowRevenueValue,
+  }) {
+    return ViewByRoleConfig(
+      isShowComissionValue: isShowComissionValue ?? this.isShowComissionValue,
+      isShowRevenueValue: isShowRevenueValue ?? this.isShowRevenueValue,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'isShowComissionValue': isShowComissionValue,
+      'isShowRevenueValue': isShowRevenueValue,
+    };
+  }
+
+  factory ViewByRoleConfig.fromMap(Map<String, dynamic> map) {
+    return ViewByRoleConfig(
+      isShowComissionValue: map['isShowComissionValue'] as bool,
+      isShowRevenueValue: map['isShowRevenueValue'] as bool,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory ViewByRoleConfig.fromJson(String source) =>
+      ViewByRoleConfig.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() =>
+      'ViewConfig(isShowComissionValue: $isShowComissionValue, isShowRevenueValue: $isShowRevenueValue)';
+
+  @override
+  bool operator ==(covariant ViewByRoleConfig other) {
+    if (identical(this, other)) return true;
+
+    return other.isShowComissionValue == isShowComissionValue &&
+        other.isShowRevenueValue == isShowRevenueValue;
+  }
+
+  @override
+  int get hashCode =>
+      isShowComissionValue.hashCode ^ isShowRevenueValue.hashCode;
 }
 
 class AuthConfig {

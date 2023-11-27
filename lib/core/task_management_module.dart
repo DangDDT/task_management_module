@@ -43,21 +43,24 @@ class TaskManagementModule {
     AuthConfig? authConfig,
     List<ListTaskTab>? listTaskTabs,
     OnGetMyCategoryIdCallback? myCategoryIdCallback,
+    ViewByRoleConfig? viewByRoleConfig,
   }) async {
     _assertInitialized();
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = userConfig;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = authConfig;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = listTaskTabs;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setGetMyCategoryCallback =
-        myCategoryIdCallback;
+    final moduleConfig = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
+    moduleConfig.setUserConfig = userConfig;
+    moduleConfig.setAuthConfig = authConfig;
+    moduleConfig.tabsInTaskView = listTaskTabs;
+    moduleConfig.setGetMyCategoryCallback = myCategoryIdCallback;
+    moduleConfig.setViewByRoleConfig = viewByRoleConfig;
   }
 
   static Future<void> logout() async {
     _assertInitialized();
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setUserConfig = null;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setAuthConfig = null;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).tabsInTaskView = null;
-    Get.find<ModuleConfig>(tag: ModuleConfig.tag).setGetMyCategoryCallback =
-        null;
+    final moduleConfig = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
+    moduleConfig.setUserConfig = null;
+    moduleConfig.setAuthConfig = null;
+    moduleConfig.tabsInTaskView = null;
+    moduleConfig.setGetMyCategoryCallback = null;
+    moduleConfig.setViewByRoleConfig = null;
   }
 }

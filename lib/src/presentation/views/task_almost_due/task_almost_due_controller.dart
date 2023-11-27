@@ -28,6 +28,8 @@ class TaskAlmostDueController extends GetxController {
     data: Rx(TaskWeddingModel.loadingList()),
   );
 
+  final Rx<DateTime> selectedDate = DateTime.now().obs;
+
   @override
   onInit() {
     loadTaskProgressData();
@@ -41,15 +43,14 @@ class TaskAlmostDueController extends GetxController {
         GetTaskWeddingParam(
           pageSize: null,
           pageIndex: null,
-          startDateFrom: DateTime.now().firstTimeOfDate(),
-          startDateTo: DateTime.now().lastTimeOfDate(),
+          startDateFrom: selectedDate.value.firstTimeOfDate(),
+          startDateTo: selectedDate.value.lastTimeOfDate(),
           orderBy: null,
           orderType: null,
           taskName: null,
           status: [
             TaskProgressEnum.toDo.toCode(),
             TaskProgressEnum.inProgress.toCode(),
-            TaskProgressEnum.done.toCode(),
           ],
         ),
       );
@@ -148,5 +149,13 @@ class TaskAlmostDueController extends GetxController {
     if (isCompleteDone.isCompleteDone) {
       await loadTaskProgressData();
     }
+  }
+
+  Future<void> onChangeDate(DateTime? date) async {
+    if (date == null) {
+      selectedDate.value = DateTime.now();
+    }
+    selectedDate.value = date!;
+    await loadTaskProgressData();
   }
 }

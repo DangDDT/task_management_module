@@ -268,6 +268,24 @@ class TaskDetailViewController extends GetxController {
     await loadTaskEventReminderModel();
   }
 
+  Future<void> onRefreshComments() async {
+    try {
+      final data = await _taskService.getTaskWedding(
+        id.toString(),
+      );
+      data.comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      taskModel.data.value = taskModel.data.value.copyWithComment(
+        data.comments,
+      );
+    } catch (e) {
+      Logger.log(e.toString(),
+          name: 'TaskDetailViewController_onRefreshComments()');
+      Toast.error(
+        message: 'Có lỗi xảy ra, vui lòng thử lại sau',
+      );
+    }
+  }
+
   Future<void> onAddComment(String comment) async {
     try {
       final addComment = await _taskService.addComment(

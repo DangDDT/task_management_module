@@ -1,8 +1,10 @@
 // ignore_for_file: unused_element
 
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_preview/image_preview.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/task_model.dart';
 import 'package:task_management_module/src/domain/models/task_order_detail.dart';
@@ -13,7 +15,6 @@ import 'package:task_management_module/src/presentation/widgets/task_wedding_car
 
 import '../../../../core/core.dart';
 import '../../../domain/domain.dart';
-import '../../shared/custom_chip.dart';
 import '../task_reminder/task_reminder_view.dart';
 import 'widgets/comment_task/comment_task_view.dart';
 import 'widgets/task_note_view.dart';
@@ -138,23 +139,29 @@ class _DataView extends StatelessWidget {
           thickness: 5.0,
           endIndent: 200,
         ),
-        if (item.taskMaster != null) ...[
-          kGapH8,
-          _ServiceTitle(item: item),
-          // kGapH8,
-          // _TaskMasterSection(item: item),
-        ] else
-          kGapH12,
+        kGapH8,
+        _TaskTitle(item: item),
+        kGapH12,
+        _TaskDetailsSection(
+          item: item,
+        ),
+        Divider(
+          height: 32,
+          indent: Get.width * 0.6,
+          thickness: 1.0,
+          color: kTheme.dividerColor,
+        ),
+        _ServiceTitle(item: item),
         kGapH12,
         _TaskOrderDetailsSection(
           item: item,
         ),
         kGapH8,
-        const Divider(
-          height: 16,
-          indent: 32,
-          thickness: 2.0,
-          endIndent: 32,
+        Divider(
+          height: 32,
+          indent: Get.width * 0.6,
+          thickness: 1.0,
+          color: kTheme.dividerColor,
         ),
         kGapH8,
         _CustomerSection(item: item),
@@ -324,67 +331,36 @@ class _ServiceTitle extends GetView<TaskDetailViewController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Chi tiết công việc',
+            'Dịch vụ cần cung cấp',
             style: kTheme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: kTheme.colorScheme.onBackground,
             ),
           ),
-          // Row(
-          //   children: [
-          //     if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
-          //       IconButton.filledTonal(
-          //         style: IconButton.styleFrom(
-          //           backgroundColor: Colors.green.withOpacity(0.8),
-          //           minimumSize: const Size.square(28),
-          //           shape: const CircleBorder(),
-          //           padding: const EdgeInsets.all(8),
-          //         ),
-          //         onPressed: () => controller.call(
-          //           item.taskMaster?.phoneNumber ?? '',
-          //         ),
-          //         icon: Icon(
-          //           Icons.phone,
-          //           color: kTheme.colorScheme.onPrimary,
-          //           size: 18,
-          //         ),
-          //       ),
-          //     if (item.taskMaster?.phoneNumber.isNotEmpty ?? false)
-          //       IconButton.filledTonal(
-          //         style: IconButton.styleFrom(
-          //           backgroundColor: Colors.red.withOpacity(0.8),
-          //           minimumSize: const Size.square(28),
-          //           shape: const CircleBorder(),
-          //           padding: const EdgeInsets.all(8),
-          //         ),
-          //         onPressed: () => controller.sendSms(
-          //           item.taskMaster?.phoneNumber ?? '',
-          //         ),
-          //         icon: Icon(
-          //           Icons.sms,
-          //           color: kTheme.colorScheme.onPrimary,
-          //           size: 18,
-          //         ),
-          //       ),
-          //     if (item.taskMaster?.email.isNotEmpty ?? false)
-          //       IconButton.filledTonal(
-          //         style: IconButton.styleFrom(
-          //           backgroundColor: Colors.blue.withOpacity(0.8),
-          //           minimumSize: const Size.square(28),
-          //           shape: const CircleBorder(),
-          //           padding: const EdgeInsets.all(8),
-          //         ),
-          //         onPressed: () => controller.sendEmail(
-          //           item.taskMaster?.email ?? '',
-          //         ),
-          //         icon: Icon(
-          //           Icons.email,
-          //           color: kTheme.colorScheme.onPrimary,
-          //           size: 18,
-          //         ),
-          //       ),
-          //   ],
-          // ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TaskTitle extends GetView<TaskDetailViewController> {
+  final TaskWeddingModel item;
+  const _TaskTitle({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Thông tin công việc',
+            style: kTheme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
+          ),
         ],
       ),
     );
@@ -493,174 +469,342 @@ class _TaskOrderDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final count = [item.orderDetail].length;
-    final isShowCount = count > 1;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 610),
+        child: Container(
+          decoration: BoxDecoration(
+            color: kTheme.colorScheme.primaryContainer.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              color: kTheme.colorScheme.primary,
+              width: 1.0,
+            ),
+          ),
+          padding: const EdgeInsets.all(8.0),
+          child: _OrderDetailSection(
+            taskOrderDetail: [item.orderDetail].first,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TaskDetailsSection extends StatelessWidget {
+  final TaskWeddingModel item;
+  const _TaskDetailsSection({
+    super.key,
+    required this.item,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 610),
+        child: Container(
+          decoration: BoxDecoration(
+            color: kTheme.colorScheme.primaryContainer.withOpacity(0.4),
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              color: kTheme.colorScheme.primary,
+              width: 1.0,
+            ),
+          ),
+          padding: const EdgeInsets.all(8.0),
+          child: _TaskDetailSection(
+            taskOrderDetail: [item.orderDetail].first,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OrderDetailSection extends GetView<TaskDetailViewController> {
+  const _OrderDetailSection({
+    super.key,
+    required this.taskOrderDetail,
+  });
+
+  final TaskOrderDetailModel taskOrderDetail;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        _RowServiceData(
+          icon: Icons.room_service_sharp,
+          title: 'Tên dịch vụ',
+          content: taskOrderDetail.service.name,
+          contentColor: kTheme.colorScheme.primary,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        kGapH4,
+        SizedBox(
+          width: double.infinity,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                FontAwesomeIcons.list,
-                color: kTheme.colorScheme.primary,
-                size: 18,
+              Row(
+                children: [
+                  Icon(
+                    Icons.image,
+                    color: kTheme.colorScheme.primary,
+                    size: 18,
+                  ),
+                  kGapW8,
+                  Text(
+                    'Hình ảnh',
+                    style: kTheme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+                  ),
+                ],
               ),
-              kGapW8,
-              Text(
-                'Dịch vụ cần cung cấp ${isShowCount ? '($count)' : ''}',
-                style: kTheme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: kTheme.colorScheme.onBackground,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ...taskOrderDetail.service.images
+                      .take(4)
+                      .map(
+                        (e) => ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: GestureDetector(
+                            onTap: () {
+                              openImagesPage(
+                                Navigator.of(context),
+                                imgUrls: taskOrderDetail.service.images,
+                                index:
+                                    taskOrderDetail.service.images.indexOf(e),
+                                heroTags: taskOrderDetail.service.images
+                                    .map((e) => e.hashCode.toString())
+                                    .toList(),
+                              );
+                            },
+                            child: ExtendedImage.network(
+                              e,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList()
+                      .joinWidget(kGapW8),
+                  if (taskOrderDetail.service.images.length > 4) ...[
+                    kGapW8,
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '+${taskOrderDetail.service.images.length - 4}',
+                          style: kTheme.textTheme.titleMedium?.copyWith(
+                            color: kTheme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
         ),
-        kGapH12,
-        if ([item.orderDetail].length == 1)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              height: 200,
-              child: _OrderDetailCard(
-                taskOrderDetail: [item.orderDetail].first,
-                index: 0,
-                isFullWidth: true,
-                isShowCount: false,
-              ),
+        kGapH8,
+        _RowServiceData(
+          icon: Icons.category,
+          title: 'Đơn vị tính',
+          content: taskOrderDetail.service.unit.isNotNullOrEmpty
+              ? '(${taskOrderDetail.service.unit.trim()})'
+              : '< Chưa có thông tin >',
+          contentColor: kTheme.colorScheme.primary,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            color: kTheme.colorScheme.onBackground.withOpacity(0.5),
+          ),
+        ),
+        kGapH16,
+        _RowServiceData(
+          icon: Icons.description,
+          title: 'Mô tả',
+          content: taskOrderDetail.service.description,
+          contentColor: kTheme.colorScheme.primary,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.labelMedium?.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        kGapH16,
+        _RowServiceData(
+          icon: Icons.attach_money,
+          title: 'Giá dịch vụ',
+          content: taskOrderDetail.service.price.toInt().toVietNamCurrency(),
+          contentColor: kTheme.colorScheme.primary,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (controller.config.viewByRoleConfig?.isShowComissionValue ??
+            false) ...[
+          kGapH16,
+          _RowServiceData(
+            icon: Icons.percent,
+            title: 'Chiết khấu',
+            content: '${taskOrderDetail.commission.toStringAsPrecision(2)} %',
+            contentColor: kTheme.colorScheme.primary,
+            titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
+            contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground.withOpacity(0.5),
             ),
           ),
-        if ([item.orderDetail].length > 1)
-          SizedBox(
-            height: 200,
-            width: double.infinity,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: [item.orderDetail].length,
-              itemBuilder: (context, index) {
-                final taskOrderDetail = [item.orderDetail][index];
-                return _OrderDetailCard(
-                  taskOrderDetail: taskOrderDetail,
-                  index: index,
-                );
-              },
-              separatorBuilder: (context, index) => kGapW8,
+        ],
+        if (controller.config.viewByRoleConfig?.isShowRevenueValue ??
+            false) ...[
+          Divider(
+            height: 16,
+            indent: Get.width * 0.6,
+            thickness: 2.0,
+          ),
+          _RowServiceData(
+            icon: Icons.attach_money,
+            title: 'Doanh thu dự kiến',
+            content: taskOrderDetail.revenue.toInt().toVietNamCurrency(),
+            titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
+            contentStyle: kTheme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.primary,
             ),
           ),
+        ],
       ],
     );
   }
 }
 
-class _OrderDetailCard extends GetView<TaskDetailViewController> {
-  const _OrderDetailCard({
+class _TaskDetailSection extends GetView<TaskDetailViewController> {
+  const _TaskDetailSection({
     super.key,
     required this.taskOrderDetail,
-    required this.index,
-    this.isFullWidth = false,
-    this.isShowCount = true,
   });
 
   final TaskOrderDetailModel taskOrderDetail;
-  final int index;
-  final bool isFullWidth;
-  final bool isShowCount;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => controller.onTapOrderDetailCard(taskOrderDetail),
-      child: Container(
-        width: isFullWidth ? null : MediaQuery.of(context).size.width * 0.7,
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(
-            color: kTheme.colorScheme.primary,
-            width: 1.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _RowServiceData(
+          icon: Icons.person,
+          title: 'Người nhận',
+          content: taskOrderDetail.fullName.isEmpty
+              ? '< Chưa có thông tin >'
+              : taskOrderDetail.fullName,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${isShowCount ? '${index + 1}.' : ''} ${taskOrderDetail.service.name} ',
-                    style: kTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
-                    ),
-                  ),
-                ),
-                kGapW8,
-                CustomChip(
-                  title: taskOrderDetail.service.unit,
-                  color: kTheme.colorScheme.primary,
-                ),
-              ],
-            ),
-            kGapH8,
-            _RowServiceData(
-              icon: Icons.attach_money,
-              title: 'Giá cung cấp',
-              content: taskOrderDetail.price.toInt().toVietNamCurrency(),
-              contentColor: kTheme.colorScheme.primary,
-              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kTheme.colorScheme.onBackground,
-              ),
-              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            kGapH8,
-            _RowServiceData(
-              icon: Icons.percent,
-              title: 'Chiết khấu',
-              content: '${taskOrderDetail.commission.toStringAsPrecision(2)} %',
-              contentColor: kTheme.colorScheme.primary,
-              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kTheme.colorScheme.onBackground,
-              ),
-              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kTheme.colorScheme.onBackground.withOpacity(0.5),
-              ),
-            ),
-            const Divider(),
-            _RowServiceData(
-              icon: Icons.attach_money,
-              title: 'Doanh thu',
-              content: taskOrderDetail.revenue.toInt().toVietNamCurrency(),
-              titleStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kTheme.colorScheme.onBackground,
-              ),
-              contentStyle: kTheme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: kTheme.colorScheme.primary,
-              ),
-            ),
-            kGapH4,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: Text(
-                taskOrderDetail.description,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: kTheme.textTheme.bodySmall?.copyWith(
-                  color: kTheme.colorScheme.onBackground.withOpacity(0.5),
-                ),
-              ),
-            ),
-          ],
+        kGapH8,
+        _RowServiceData(
+          icon: Icons.add_shopping_cart,
+          title: 'Ngày khách cần',
+          content: taskOrderDetail.eventDate.toFullString(),
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
+        kGapH8,
+        _RowServiceData(
+          icon: Icons.phone,
+          title: 'SĐT người nhận',
+          content: taskOrderDetail.phone.isEmpty
+              ? '< Chưa có thông tin >'
+              : taskOrderDetail.phone,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        kGapH8,
+        _RowServiceData(
+          icon: Icons.location_on,
+          title: 'Địa chỉ giao',
+          content: taskOrderDetail.address.isEmpty
+              ? '< Chưa có thông tin > '
+              : taskOrderDetail.address,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        kGapH8,
+        _RowServiceData(
+          icon: Icons.note,
+          title: 'Ghi chú của khách hàng',
+          content: taskOrderDetail.description.isEmpty
+              ? '< Không có ghi chú >'
+              : taskOrderDetail.description,
+          titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: kTheme.colorScheme.onBackground,
+          ),
+          contentStyle: kTheme.textTheme.labelLarge?.copyWith(
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -680,21 +824,46 @@ class _CommentSection extends GetView<TaskDetailViewController> {
         borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             children: [
-              Icon(
-                FontAwesomeIcons.solidCommentDots,
-                color: kTheme.colorScheme.primary,
-                size: 24,
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.solidCommentDots,
+                    color: kTheme.colorScheme.primary,
+                    size: 24,
+                  ),
+                  kGapW8,
+                  Text(
+                    'Trao đổi công việc',
+                    style: kTheme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
+                    ),
+                  ),
+                ],
               ),
               kGapW8,
               Text(
-                'Trao đổi công việc',
+                '(${item.comments.length})',
                 style: kTheme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: kTheme.colorScheme.onBackground,
+                  color: kTheme.colorScheme.primary,
+                ),
+              ),
+              const Spacer(),
+              IconButton.filledTonal(
+                style: IconButton.styleFrom(
+                  minimumSize: const Size.square(28),
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(8),
+                ),
+                onPressed: controller.onRefreshComments,
+                icon: const Icon(
+                  Icons.refresh,
+                  size: 18,
                 ),
               ),
             ],
@@ -733,165 +902,179 @@ class _CustomerSection extends GetView<TaskDetailViewController> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Thông tin khách hàng',
-                  style: kTheme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: kTheme.colorScheme.onBackground,
-                  ),
-                ),
-                Row(
-                  children: [
-                    if (item.customer.phoneNumber.isNotEmpty)
-                      IconButton.filledTonal(
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.green.withOpacity(0.8),
-                          minimumSize: const Size.square(28),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(8),
-                        ),
-                        onPressed: () => controller.call(
-                          item.customer.phoneNumber,
-                        ),
-                        icon: Icon(
-                          Icons.phone,
-                          color: kTheme.colorScheme.onPrimary,
-                          size: 18,
-                        ),
-                      ),
-                    if (item.customer.phoneNumber.isNotEmpty)
-                      IconButton.filledTonal(
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.red.withOpacity(0.8),
-                          minimumSize: const Size.square(28),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(8),
-                        ),
-                        onPressed: () => controller.sendSms(
-                          item.customer.phoneNumber,
-                        ),
-                        icon: Icon(
-                          Icons.sms,
-                          color: kTheme.colorScheme.onPrimary,
-                          size: 18,
-                        ),
-                      ),
-                    if (item.customer.email.isNotEmpty)
-                      IconButton.filledTonal(
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.blue.withOpacity(0.8),
-                          minimumSize: const Size.square(28),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(8),
-                        ),
-                        onPressed: () => controller.sendEmail(
-                          item.customer.email,
-                        ),
-                        icon: Icon(
-                          Icons.email,
-                          color: kTheme.colorScheme.onPrimary,
-                          size: 18,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-            kGapH16,
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: kTheme.colorScheme.primary,
-                  width: 1.0,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 610),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Flexible(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  FontAwesomeIcons.user,
-                                  color: kTheme.colorScheme.primary,
-                                  size: 18,
-                                ),
-                                kGapW8,
-                                Text(
-                                  'Họ và tên',
-                                  style: kTheme.textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: kTheme.colorScheme.onBackground,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                CircleAvatarWithErrorHandler(
-                                  avatarUrl: item.customer.avatar,
-                                  fullName: item.customer.fullName,
-                                ),
-                                kGapW8,
-                                Text(
-                                  item.customer.fullName,
-                                  style: kTheme.textTheme.titleSmall?.copyWith(
-                                    color: kTheme.colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        kGapH8,
-                        _RowServiceData(
-                          icon: Icons.phone,
-                          title: 'Số điện thoại',
-                          content: item.customer.phoneNumber,
-                        ),
-                        kGapH8,
-                        _RowServiceData(
-                          icon: Icons.email,
-                          title: 'Email',
-                          content: item.customer.email.isEmpty
-                              ? '< Không có dữ liệu >'
-                              : item.customer.email,
-                        ),
-                        kGapH8,
-                        _RowServiceData(
-                          icon: Icons.location_on,
-                          title: 'Địa chỉ',
-                          content: item.customer.address,
-                        ),
-                      ],
+                  Text(
+                    'Thông tin khách hàng',
+                    style: kTheme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: kTheme.colorScheme.onBackground,
                     ),
+                  ),
+                  Row(
+                    children: [
+                      if (item.customer.phoneNumber.isNotEmpty)
+                        IconButton.filledTonal(
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.green.withOpacity(0.8),
+                            minimumSize: const Size.square(28),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          onPressed: () => controller.call(
+                            item.customer.phoneNumber,
+                          ),
+                          icon: Icon(
+                            Icons.phone,
+                            color: kTheme.colorScheme.onPrimary,
+                            size: 18,
+                          ),
+                        ),
+                      if (item.customer.phoneNumber.isNotEmpty)
+                        IconButton.filledTonal(
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.red.withOpacity(0.8),
+                            minimumSize: const Size.square(28),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          onPressed: () => controller.sendSms(
+                            item.customer.phoneNumber,
+                          ),
+                          icon: Icon(
+                            Icons.sms,
+                            color: kTheme.colorScheme.onPrimary,
+                            size: 18,
+                          ),
+                        ),
+                      if (item.customer.email.isNotEmpty)
+                        IconButton.filledTonal(
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.blue.withOpacity(0.8),
+                            minimumSize: const Size.square(28),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          onPressed: () => controller.sendEmail(
+                            item.customer.email,
+                          ),
+                          icon: Icon(
+                            Icons.email,
+                            color: kTheme.colorScheme.onPrimary,
+                            size: 18,
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),
-            ),
-          ],
+              kGapH16,
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                decoration: BoxDecoration(
+                  color: kTheme.colorScheme.primaryContainer.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(
+                    color: kTheme.colorScheme.primary,
+                    width: 1.0,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.user,
+                                    color: kTheme.colorScheme.primary,
+                                    size: 18,
+                                  ),
+                                  kGapW8,
+                                  Text(
+                                    'Họ và tên',
+                                    style:
+                                        kTheme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: kTheme.colorScheme.onBackground,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  CircleAvatarWithErrorHandler(
+                                    avatarUrl: item.customer.avatar,
+                                    fullName: item.customer.fullName,
+                                  ),
+                                  kGapW8,
+                                  Text(
+                                    item.customer.fullName,
+                                    style:
+                                        kTheme.textTheme.titleSmall?.copyWith(
+                                      color: kTheme.colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          kGapH8,
+                          _RowServiceData(
+                            icon: Icons.phone,
+                            title: 'Số điện thoại',
+                            content: item.customer.phoneNumber,
+                          ),
+                          kGapH8,
+                          _RowServiceData(
+                            icon: Icons.email,
+                            title: 'Email',
+                            content: item.customer.email.isEmpty
+                                ? '< Không có dữ liệu >'
+                                : item.customer.email,
+                            contentStyle:
+                                kTheme.textTheme.labelMedium?.copyWith(
+                              color: item.customer.email.isEmpty
+                                  ? kTheme.colorScheme.onBackground
+                                      .withOpacity(0.5)
+                                  : kTheme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          kGapH8,
+                          _RowServiceData(
+                            icon: Icons.location_on,
+                            title: 'Địa chỉ',
+                            content: item.customer.address,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -931,18 +1114,21 @@ class _RowServiceData extends StatelessWidget {
                 size: 18,
               ),
               kGapW8,
-              Text(
-                title,
-                style: titleStyle ??
-                    kTheme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: kTheme.colorScheme.onBackground,
-                    ),
+              Expanded(
+                child: Text(
+                  title,
+                  style: titleStyle ??
+                      kTheme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: kTheme.colorScheme.onBackground,
+                      ),
+                ),
               ),
             ],
           ),
         ),
         Flexible(
+          flex: 1,
           child: Text(
             content,
             textAlign: TextAlign.end,

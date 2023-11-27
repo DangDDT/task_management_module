@@ -23,7 +23,7 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
         quantity: 1,
         fullName: entity.orderDetail?.order?.fullname ??
             DefaultValueMapperConstants.defaultStringValue,
-        address: entity.orderDetail?.order?.address ??
+        address: entity.orderDetail?.address ??
             DefaultValueMapperConstants.defaultStringValue,
         phone: entity.orderDetail?.order?.phone ??
             DefaultValueMapperConstants.defaultStringValue,
@@ -37,8 +37,7 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
           images: (entity.orderDetail?.service?.serviceImages ?? [])
               .map((e) => e.imageUrl ?? '')
               .toList(),
-          unit: entity.orderDetail?.service?.unit ??
-              DefaultValueMapperConstants.defaultStringValue,
+          unit: entity.orderDetail?.service?.unit ?? '',
         ),
         price: entity.orderDetail?.price?.toDouble() ??
             DefaultValueMapperConstants.defaultDoubleValue,

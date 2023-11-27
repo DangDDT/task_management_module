@@ -121,8 +121,8 @@ class ListTaskViewController extends GetxController
           pageSize: _pageSize,
           orderBy: 'StartDate',
           orderType: 'DESC',
-          startDateFrom: null,
-          startDateTo: null,
+          startDateFrom: filter.value?.duedate?.firstTimeOfDate(),
+          startDateTo: filter.value?.duedate?.lastTimeOfDate(),
           status: selectedTab.value.tabType.isAll
               ? null
               : [selectedTab.value.tabType.toCode()],
