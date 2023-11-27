@@ -229,7 +229,7 @@ class TaskWeddingItem extends GetView<ListTaskViewController> {
           isShowDueDate: true,
           // controller.taskWillShowDueDate.contains(item.status),
           isShowTag: true,
-          isShowFullName: true,
+          isShowFullName: false,
           isShowFullDescription: true,
           isShowStatus: true,
           isShowServiceName: true,

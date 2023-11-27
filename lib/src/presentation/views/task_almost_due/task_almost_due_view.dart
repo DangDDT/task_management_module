@@ -160,7 +160,7 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
       status: task.status,
       config: TaskServiceCardViewConfig(
         isShowCustomerName: false,
-        isShowFullName: true,
+        isShowFullName: false,
         isShowServiceName: true,
         isShowStatus: true,
         isShowDescription: false,
