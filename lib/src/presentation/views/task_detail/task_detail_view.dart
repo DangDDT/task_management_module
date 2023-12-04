@@ -23,6 +23,7 @@ class TaskDetailView extends StatelessWidget {
   const TaskDetailView({
     super.key,
     required this.taskId,
+    required this.code,
     required this.name,
     required this.description,
     required this.duedate,
@@ -33,6 +34,7 @@ class TaskDetailView extends StatelessWidget {
   });
   final dynamic taskId;
   final String name;
+  final String code;
   final String description;
   final DateTime duedate;
   final String taskMasterName;
@@ -68,6 +70,7 @@ class TaskDetailView extends StatelessWidget {
                         var taskServiceCard = TaskWeddingCard(
                           taskId: taskId,
                           name: name,
+                          code: code,
                           description: description,
                           duedate: duedate,
                           taskMasterName: taskMasterName,
@@ -360,6 +363,22 @@ class _TaskTitle extends GetView<TaskDetailViewController> {
               fontWeight: FontWeight.bold,
               color: kTheme.colorScheme.onBackground,
             ),
+          ),
+          Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.hashtag,
+                color: kTheme.colorScheme.primary,
+                size: 18,
+              ),
+              Text(
+                item.code,
+                style: kTheme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: kTheme.colorScheme.primary,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -777,7 +796,7 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
         kGapH8,
         _RowServiceData(
           icon: Icons.location_on,
-          title: 'Địa chỉ giao',
+          title: 'Địa chỉ được đặt',
           content: taskOrderDetail.address.isEmpty
               ? '< Chưa có thông tin > '
               : taskOrderDetail.address,

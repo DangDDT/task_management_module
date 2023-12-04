@@ -52,6 +52,7 @@ class TaskWeddingCard extends StatelessWidget {
     super.key,
     this.onTap,
     required this.taskId,
+    required this.code,
     required this.name,
     required this.description,
     required this.duedate,
@@ -68,6 +69,7 @@ class TaskWeddingCard extends StatelessWidget {
     this.config = const TaskServiceCardViewConfig(),
   })  : onTap = null,
         taskId = item?.id,
+        code = item?.code ?? '',
         name = item?.name ?? '',
         description = item?.description ?? '',
         duedate = item?.duedate ?? DateTime.now(),
@@ -82,6 +84,7 @@ class TaskWeddingCard extends StatelessWidget {
   final TaskWeddingModel? item;
   final VoidCallback? onTap;
   final dynamic taskId;
+  final String code;
   final String name;
   final String description;
   final DateTime duedate;
@@ -161,18 +164,14 @@ class TaskWeddingCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
+                  Expanded(
                     child: Text(
                       name,
                       style: config.taskNameStyle ??
                           kTheme.textTheme.titleMedium?.copyWith(
+                            color: kTheme.colorScheme.onPrimaryContainer,
                             fontWeight: FontWeight.bold,
-                            color: config.isFilled
-                                ? kTheme.colorScheme.onBackground
-                                : kTheme.colorScheme.primary,
                           ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (config.actionConfig?.actions.isNotEmpty ?? false) ...[
@@ -184,13 +183,32 @@ class TaskWeddingCard extends StatelessWidget {
                         color: kTheme.colorScheme.primary,
                       ),
                     ),
-                  ],
+                  ]
                 ],
               ),
-              if (config.isShowStatus) ...[
-                kGapH8,
-                Row(
-                  children: [
+              kGapH8,
+              Row(
+                children: [
+                  if (config.isShowTag) ...[
+                    CustomChip(
+                      icon: Icon(
+                        Icons.tag,
+                        size: 16.0,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                      title: code,
+                      textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                        color: kTheme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 4.0,
+                      ),
+                    ),
+                    kGapW4,
+                  ],
+                  if (config.isShowStatus) ...[
                     CustomChip(
                       icon: Icon(status.icon, size: 16.0, color: status.color),
                       title: status.name,
@@ -229,8 +247,8 @@ class TaskWeddingCard extends StatelessWidget {
                       ),
                     ]
                   ],
-                ),
-              ],
+                ],
+              ),
               if (config.isShowDescription) ...[
                 kGapH8,
                 Text.rich(
@@ -308,9 +326,9 @@ class TaskWeddingCard extends StatelessWidget {
                             ),
                             title: name,
                             fillColor: true,
-                            color: kTheme.colorScheme.primary,
+                            color: kTheme.colorScheme.secondary,
                             textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                              color: kTheme.colorScheme.primary,
+                              color: kTheme.colorScheme.onSecondaryContainer,
                               fontWeight: FontWeight.bold,
                             ),
                             padding: const EdgeInsets.symmetric(

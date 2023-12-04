@@ -201,6 +201,7 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
     return TaskWeddingCard(
       onTap: onTap,
       taskId: task.id,
+      code: task.code,
       name: task.name,
       description: task.description,
       duedate: task.duedate,

@@ -20,6 +20,7 @@ class TaskDetailPage extends GetView<TaskDetailController> {
       body: TaskDetailView(
         taskId: controller.taskId,
         name: controller.name,
+        code: controller.code,
         description: controller.description,
         duedate: controller.duedate,
         taskMasterName: controller.taskMasterName,

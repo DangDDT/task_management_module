@@ -15,6 +15,7 @@ class TaskDetailController extends GetxController {
 
   ///Params
   late final dynamic taskId;
+  late final String code;
   late final String name;
   late final String description;
   late final DateTime duedate;
@@ -29,6 +30,7 @@ class TaskDetailController extends GetxController {
   void onInit() {
     super.onInit();
     taskId = Get.arguments['taskId'] ?? -1;
+    code = Get.arguments['code'] ?? '';
     name = Get.arguments['name'] ?? '';
     description = Get.arguments['description'] ?? '';
     duedate = Get.arguments['duedate'] ?? DateTime.now();

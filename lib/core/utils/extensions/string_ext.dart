@@ -3,28 +3,14 @@ import 'dart:math';
 part 'string_ext_2.dart';
 
 extension StringX on String {
+  ///Lấy kí tự đầu của chữ đầu và kí tự đầu của chữ cuối
   String get initialWords {
     try {
-      List<String> names = split(' ');
-      String initials = '';
-
-      int nameLength = names.length;
-      if (nameLength > 1) {
-        final word1 = names[nameLength - 2];
-        final word2 = names[nameLength - 2];
-        if (word1.isNotEmpty) {
-          initials += word1[0];
-        }
-        if (word2.isNotEmpty) {
-          initials += word2[0];
-        }
-      } else {
-        final word1 = names[nameLength - 2];
-        if (word1.isNotEmpty) {
-          initials += word1[0];
-        }
+      final words = split(' ');
+      if (words.length == 1) {
+        return words[0].substring(0, 1).toUpperCase();
       }
-      return initials;
+      return '${words[0].substring(0, 1).toUpperCase()}${words[words.length - 1].substring(0, 1).toUpperCase()}';
     } catch (e) {
       return '';
     }

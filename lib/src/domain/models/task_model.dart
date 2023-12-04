@@ -10,6 +10,7 @@ import 'task_order_detail.dart';
 
 class BaseTaskModel {
   final dynamic id;
+  final String code;
   final String name;
   final String description;
   final DateTime createdDate;
@@ -20,6 +21,7 @@ class BaseTaskModel {
 
   BaseTaskModel({
     required this.id,
+    required this.code,
     required this.name,
     required this.description,
     required this.createdDate,
@@ -76,6 +78,7 @@ class TaskWeddingModel extends BaseTaskModel {
 
   TaskWeddingModel({
     required super.id,
+    required super.code,
     required super.name,
     required super.description,
     required super.createdDate,
@@ -91,6 +94,7 @@ class TaskWeddingModel extends BaseTaskModel {
   TaskWeddingModel copyWithComment(List<TaskCommentModel> newComments) {
     return TaskWeddingModel(
       id: id,
+      code: code,
       name: name,
       description: description,
       createdDate: createdDate,
@@ -107,6 +111,7 @@ class TaskWeddingModel extends BaseTaskModel {
   factory TaskWeddingModel.loading() {
     return TaskWeddingModel(
       id: const UuidV4().generate(),
+      code: 'P000000',
       name: 'Đang tải...',
       description: 'Đang tải...',
       createdDate: DateTime.now(),
@@ -122,6 +127,7 @@ class TaskWeddingModel extends BaseTaskModel {
   factory TaskWeddingModel.error() {
     return TaskWeddingModel(
       id: const UuidV4().generate(),
+      code: '-P999999',
       name: 'Lỗi',
       description: 'Không có dữ liệu',
       createdDate: DateTime.now(),
