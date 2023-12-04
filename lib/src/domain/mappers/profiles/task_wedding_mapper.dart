@@ -41,8 +41,7 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
         ),
         price: entity.orderDetail?.price?.toDouble() ??
             DefaultValueMapperConstants.defaultDoubleValue,
-        description: entity.orderDetail?.description ??
-            DefaultValueMapperConstants.defaultStringValue,
+        description: entity.orderDetail?.description ?? '',
         eventDate: entity.orderDetail?.startTime ??
             DefaultValueMapperConstants.defaultDateTimeValue,
       ),
