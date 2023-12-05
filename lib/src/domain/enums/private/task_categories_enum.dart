@@ -59,7 +59,7 @@ enum TaskProgressEnum {
       case TaskProgressEnum.expected:
         return Colors.grey;
       case TaskProgressEnum.toDo:
-        return Colors.grey;
+        return Colors.blue;
       case TaskProgressEnum.inProgress:
         return Colors.orange;
       case TaskProgressEnum.done:

@@ -101,11 +101,11 @@ class _$ServerErrorDetailCopyWithImpl<$Res, $Val extends ServerErrorDetail>
 }
 
 /// @nodoc
-abstract class _$$_ServerErrorDetailCopyWith<$Res>
+abstract class _$$ServerErrorDetailImplCopyWith<$Res>
     implements $ServerErrorDetailCopyWith<$Res> {
-  factory _$$_ServerErrorDetailCopyWith(_$_ServerErrorDetail value,
-          $Res Function(_$_ServerErrorDetail) then) =
-      __$$_ServerErrorDetailCopyWithImpl<$Res>;
+  factory _$$ServerErrorDetailImplCopyWith(_$ServerErrorDetailImpl value,
+          $Res Function(_$ServerErrorDetailImpl) then) =
+      __$$ServerErrorDetailImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -118,11 +118,11 @@ abstract class _$$_ServerErrorDetailCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_ServerErrorDetailCopyWithImpl<$Res>
-    extends _$ServerErrorDetailCopyWithImpl<$Res, _$_ServerErrorDetail>
-    implements _$$_ServerErrorDetailCopyWith<$Res> {
-  __$$_ServerErrorDetailCopyWithImpl(
-      _$_ServerErrorDetail _value, $Res Function(_$_ServerErrorDetail) _then)
+class __$$ServerErrorDetailImplCopyWithImpl<$Res>
+    extends _$ServerErrorDetailCopyWithImpl<$Res, _$ServerErrorDetailImpl>
+    implements _$$ServerErrorDetailImplCopyWith<$Res> {
+  __$$ServerErrorDetailImplCopyWithImpl(_$ServerErrorDetailImpl _value,
+      $Res Function(_$ServerErrorDetailImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -135,7 +135,7 @@ class __$$_ServerErrorDetailCopyWithImpl<$Res>
     Object? message = null,
     Object? field = null,
   }) {
-    return _then(_$_ServerErrorDetail(
+    return _then(_$ServerErrorDetailImpl(
       detail: null == detail
           ? _value.detail
           : detail // ignore: cast_nullable_to_non_nullable
@@ -166,8 +166,8 @@ class __$$_ServerErrorDetailCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ServerErrorDetail implements _ServerErrorDetail {
-  const _$_ServerErrorDetail(
+class _$ServerErrorDetailImpl implements _ServerErrorDetail {
+  const _$ServerErrorDetailImpl(
       {this.detail = '',
       this.path = '',
       this.serverErrorId = '',
@@ -211,7 +211,7 @@ class _$_ServerErrorDetail implements _ServerErrorDetail {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServerErrorDetail &&
+            other is _$ServerErrorDetailImpl &&
             (identical(other.detail, detail) || other.detail == detail) &&
             (identical(other.path, path) || other.path == path) &&
             (identical(other.serverErrorId, serverErrorId) ||
@@ -229,8 +229,8 @@ class _$_ServerErrorDetail implements _ServerErrorDetail {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ServerErrorDetailCopyWith<_$_ServerErrorDetail> get copyWith =>
-      __$$_ServerErrorDetailCopyWithImpl<_$_ServerErrorDetail>(
+  _$$ServerErrorDetailImplCopyWith<_$ServerErrorDetailImpl> get copyWith =>
+      __$$ServerErrorDetailImplCopyWithImpl<_$ServerErrorDetailImpl>(
           this, _$identity);
 }
 
@@ -241,7 +241,7 @@ abstract class _ServerErrorDetail implements ServerErrorDetail {
       final String serverErrorId,
       final int serverStatusCode,
       final String message,
-      final String field}) = _$_ServerErrorDetail;
+      final String field}) = _$ServerErrorDetailImpl;
 
   @override
   String get detail;
@@ -265,6 +265,6 @@ abstract class _ServerErrorDetail implements ServerErrorDetail {
   String get field;
   @override
   @JsonKey(ignore: true)
-  _$$_ServerErrorDetailCopyWith<_$_ServerErrorDetail> get copyWith =>
+  _$$ServerErrorDetailImplCopyWith<_$ServerErrorDetailImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,11 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_management_module/core/gens/assets.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
+import 'package:task_management_module/src/presentation/shared/shared.dart';
 
 import '../../../core/core.dart';
 import '../../domain/models/task_model.dart';
-import '../shared/custom_chip.dart';
 
 class TaskServiceCardViewConfig {
   final bool isShowDescription;
@@ -143,258 +144,332 @@ class TaskWeddingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
-        width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            color: config.taskCardColor ??
-                (config.isFilled
-                    ? kTheme.colorScheme.primaryContainer.withOpacity(0.4)
-                    : kTheme.colorScheme.background),
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: kTheme.colorScheme.background),
-          ),
-          child: Padding(
-            padding: config.isFilled
-                ? const EdgeInsets.all(16.0)
-                : const EdgeInsets.all(8.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      name,
-                      style: config.taskNameStyle ??
-                          kTheme.textTheme.titleMedium?.copyWith(
-                            color: kTheme.colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  if (config.actionConfig?.actions.isNotEmpty ?? false) ...[
-                    kGapW8,
-                    GestureDetector(
-                      onTap: showActionDialog,
-                      child: Icon(
-                        Icons.more_horiz,
-                        color: kTheme.colorScheme.primary,
-                      ),
-                    ),
-                  ]
-                ],
+      child: Stack(clipBehavior: Clip.none, children: [
+        Container(
+          padding: config.isFilled
+              ? const EdgeInsets.symmetric(vertical: 8.0)
+              : null,
+          child: SizedBox(
+            width: double.infinity,
+            child: Container(
+              decoration: BoxDecoration(
+                color: config.taskCardColor ??
+                    (config.isFilled
+                        ? kTheme.colorScheme.surface.withOpacity(0.6)
+                        : kTheme.colorScheme.background),
+                borderRadius: BorderRadius.circular(12.0),
+                border: config.isFilled
+                    ? Border.all(
+                        color: status.color,
+                      )
+                    : null,
               ),
-              kGapH8,
-              Wrap(
-                children: [
-                  if (config.isShowTag) ...[
-                    CustomChip(
-                      icon: Icon(
-                        Icons.tag,
-                        size: 16.0,
-                        color: context.theme.colorScheme.primary,
-                      ),
-                      title: code,
-                      textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                        color: kTheme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
-                      ),
-                    ),
-                    kGapW4,
-                  ],
-                  if (config.isShowStatus) ...[
-                    CustomChip(
-                      icon: Icon(status.icon, size: 16.0, color: status.color),
-                      title: status.name,
-                      color: status.color,
-                      textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                        color: kTheme.colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
-                      ),
-                    ),
-                    if (config.isShowExpiredTag &&
-                        duedate.lastTimeOfDate().isBefore(
-                              DateTime.now(),
-                            ) &&
-                        (!status.isDone && !status.isExpected)) ...[
-                      kGapW4,
-                      CustomChip(
-                        icon: const Icon(
-                          Icons.warning_amber_rounded,
-                          size: 16.0,
-                          color: Colors.red,
-                        ),
-                        title: 'Quá hạn',
-                        color: Colors.red,
-                        textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                          color: kTheme.colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                          vertical: 4.0,
-                        ),
-                      ),
-                    ]
-                  ],
-                ],
-              ),
-              if (config.isShowDescription) ...[
-                kGapH8,
-                Text.rich(
-                  TextSpan(
+              child: Padding(
+                padding: config.isFilled
+                    ? const EdgeInsets.all(16.0)
+                    : const EdgeInsets.all(8.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                        text: 'Mô tả: ',
-                        style: kTheme.textTheme.bodySmall,
-                      ),
-                      TextSpan(
-                        text: description,
-                        style: kTheme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              if (config.isShowFullName && taskMasterName.isNotNullOrEmpty) ...[
-                kGapH4,
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Người tạo công việc: ',
-                        style: kTheme.textTheme.bodySmall,
-                      ),
-                      TextSpan(
-                        text: taskMasterName,
-                        style: kTheme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                kGapH8,
-              ] else
-                kGapH8,
-              if (config.isShowCustomerName) ...[
-                kGapH4,
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Khách hàng: ',
-                        style: kTheme.textTheme.bodySmall,
-                      ),
-                      TextSpan(
-                        text: customerName,
-                        style: kTheme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              if (config.isShowServiceName) ...[
-                kGapH8,
-                Wrap(
-                  runSpacing: 4.0,
-                  spacing: 4.0,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    ...serviceNames
-                        .take(2)
-                        .map(
-                          (name) => CustomChip(
-                            constraints: BoxConstraints(
-                              maxWidth: serviceNames.length > 2
-                                  ? context.width * 0.3
-                                  : context.width * 0.5,
-                            ),
-                            title: name,
-                            fillColor: true,
-                            color: kTheme.colorScheme.secondary,
-                            textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                              color: kTheme.colorScheme.onSecondaryContainer,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 4.0,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    if (serviceNames.length > 2) ...[
-                      kGapW4,
-                      CustomChip(
-                        title: '+${serviceNames.length - 2} dịch vụ',
-                        color: kTheme.colorScheme.primary.withOpacity(0.2),
-                        textStyle: kTheme.textTheme.bodySmall?.copyWith(
-                          color: kTheme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
-                          vertical: 4.0,
-                        ),
-                      ),
-                    ]
-                  ],
-                ),
-              ],
-              if (config.isShowDueDate) ...[
-                kGapH12,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text.rich(
-                      TextSpan(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextSpan(
-                            text: 'Ngày khách cần: ',
-                            style: kTheme.textTheme.bodySmall,
-                          ),
-                          TextSpan(
-                            text: duedate.toFullString(),
-                            style: kTheme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Text(
+                              name,
+                              style: config.taskNameStyle ??
+                                  kTheme.textTheme.titleMedium?.copyWith(
+                                    color:
+                                        kTheme.colorScheme.onPrimaryContainer,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ),
+                          if (config.actionConfig?.actions.isNotEmpty ??
+                              false) ...[
+                            kGapW8,
+                            GestureDetector(
+                              onTap: showActionDialog,
+                              child: Icon(
+                                Icons.more_horiz,
+                                color: kTheme.colorScheme.primary,
+                              ),
+                            ),
+                          ]
                         ],
                       ),
-                    ),
-                    if (config.isShowCountDown) ...[
-                      kGapW4,
-                      Text(
-                        '(${duedate.toReadableDueDateWithHourString()})',
-                        style: kTheme.textTheme.bodySmall?.copyWith(
-                          color: kTheme.colorScheme.error,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      kGapH8,
+                      Wrap(
+                        children: [
+                          if (config.isShowTag) ...[
+                            CustomChip(
+                              icon: Icon(
+                                Icons.tag,
+                                size: 16.0,
+                                color: context.theme.colorScheme.primary,
+                              ),
+                              title: code,
+                              textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                                color: kTheme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                                vertical: 4.0,
+                              ),
+                            ),
+                            kGapW4,
+                          ],
+                          if (config.isShowStatus) ...[
+                            CustomChip(
+                              icon: Icon(status.icon,
+                                  size: 16.0, color: status.color),
+                              title: status.name,
+                              color: status.color,
+                              textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                                color: kTheme.colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                                vertical: 4.0,
+                              ),
+                            ),
+                            if (config.isShowExpiredTag &&
+                                duedate.lastTimeOfDate().isBefore(
+                                      DateTime.now(),
+                                    ) &&
+                                (!status.isDone && !status.isExpected)) ...[
+                              kGapW4,
+                              CustomChip(
+                                icon: const Icon(
+                                  Icons.warning_amber_rounded,
+                                  size: 16.0,
+                                  color: Colors.red,
+                                ),
+                                title: 'Quá hạn',
+                                color: Colors.red,
+                                textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                                  color: kTheme.colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 4.0,
+                                ),
+                              ),
+                            ]
+                          ],
+                        ],
                       ),
-                    ],
-                  ],
-                ),
-              ] else
-                const SizedBox.shrink(),
-            ]),
+                      if (config.isShowDescription) ...[
+                        kGapH8,
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Mô tả: ',
+                                style: kTheme.textTheme.bodySmall,
+                              ),
+                              TextSpan(
+                                text: description,
+                                style: kTheme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (config.isShowFullName &&
+                          taskMasterName.isNotNullOrEmpty) ...[
+                        kGapH4,
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Người tạo công việc: ',
+                                style: kTheme.textTheme.bodySmall,
+                              ),
+                              TextSpan(
+                                text: taskMasterName,
+                                style: kTheme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        kGapH8,
+                      ] else
+                        kGapH8,
+                      if (config.isShowCustomerName) ...[
+                        kGapH4,
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Khách hàng: ',
+                                style: kTheme.textTheme.bodySmall,
+                              ),
+                              TextSpan(
+                                text: customerName,
+                                style: kTheme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (config.isShowServiceName) ...[
+                        kGapH8,
+                        Wrap(
+                          runSpacing: 4.0,
+                          spacing: 4.0,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            ...serviceNames
+                                .take(2)
+                                .map(
+                                  (name) => CustomChip(
+                                    constraints: BoxConstraints(
+                                      maxWidth: serviceNames.length > 2
+                                          ? context.width * 0.3
+                                          : context.width * 0.5,
+                                    ),
+                                    title: name,
+                                    fillColor: true,
+                                    color: kTheme.colorScheme.secondary,
+                                    textStyle:
+                                        kTheme.textTheme.bodySmall?.copyWith(
+                                      color: kTheme
+                                          .colorScheme.onSecondaryContainer,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                      vertical: 4.0,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            if (serviceNames.length > 2) ...[
+                              kGapW4,
+                              CustomChip(
+                                title: '+${serviceNames.length - 2} dịch vụ',
+                                color:
+                                    kTheme.colorScheme.primary.withOpacity(0.2),
+                                textStyle: kTheme.textTheme.bodySmall?.copyWith(
+                                  color: kTheme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 4.0,
+                                ),
+                              ),
+                            ]
+                          ],
+                        ),
+                      ],
+                      if (config.isShowDueDate) ...[
+                        kGapH12,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Ngày khách cần: ',
+                                    style: kTheme.textTheme.bodySmall,
+                                  ),
+                                  TextSpan(
+                                    text: duedate.toFullString(),
+                                    style: kTheme.textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (config.isShowCountDown) ...[
+                              kGapW4,
+                              Text(
+                                '(${duedate.toReadableDueDateWithHourString()})',
+                                style: kTheme.textTheme.bodySmall?.copyWith(
+                                  color: kTheme.colorScheme.error,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ] else
+                        const SizedBox.shrink(),
+                    ]),
+              ),
+            ),
           ),
         ),
-      ),
+        // Positioned(
+        //   top: 14,
+        //   right: 16,
+        //   child: Row(
+        //     children: [
+        //       Container(
+        //         width: 14.0,
+        //         height: 14.0,
+        //         decoration: BoxDecoration(
+        //           color: kTheme.colorScheme.surfaceVariant.withOpacity(0.4),
+        //           shape: BoxShape.circle,
+        //           border: Border.all(
+        //             color: kTheme.disabledColor,
+        //             width: 2.0,
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        if (config.isFilled) ...[
+          Positioned(
+            top: -4,
+            right: 0,
+            child: FadeSlideTransition(
+              begin: const Offset(5, -5),
+              duration: const Duration(milliseconds: 410),
+              child: Image.asset(
+                Assets.task_management_module$assets_images_pin_png,
+                width: 24.0,
+                height: 24.0,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 0,
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: item?.status.color.withOpacity(0.4) ??
+                        kTheme.colorScheme.primary.withOpacity(0.4),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(12.0),
+                      bottomRight: Radius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ]),
     );
   }
 }

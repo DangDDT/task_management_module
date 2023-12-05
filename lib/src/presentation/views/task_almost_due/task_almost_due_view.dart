@@ -155,7 +155,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
             ),
             kGapH12,
             Text(
-              'Không có công việc nào cần hoàn thành',
+              'Chưa có công việc nào cần hoàn thành',
               style: kTheme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,

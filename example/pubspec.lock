@@ -133,10 +133,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android
-      sha256: "58463140f1b39591b8e2155861b436abad4ceb48160058be8374164ff0309ef3"
+      sha256: b63304d553dde613ca68fb40aaa76bbbcdbd051683bdbf2019671ec8d9645ce7
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.8+13"
+    version: "0.10.8+14"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -222,10 +222,10 @@ packages:
     dependency: transitive
     description:
       name: cross_file
-      sha256: "445db18de832dba8d851e287aff8ccf169bed30d2e94243cb54c7d2f1ed2142c"
+      sha256: "2f9d2cbccb76127ba28528cb3ae2c2326a122446a83de5a056aaa3880d3882c5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3+6"
+    version: "0.3.3+7"
   crypto:
     dependency: transitive
     description:
@@ -254,18 +254,18 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: abd7625e16f51f554ea244d090292945ec4d4be7bfbaf2ec8cccea568919d334
+      sha256: "40ae61a5d43feea6d24bd22c0537a6629db858963b99b4bc1c3db80676f32368"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.3"
+    version: "2.3.4"
   device_info_plus:
     dependency: transitive
     description:
       name: device_info_plus
-      sha256: "7035152271ff67b072a211152846e9f1259cf1be41e34cd3e0b5463d2d6b8419"
+      sha256: "0042cb3b2a76413ea5f8a2b40cec2a33e01d0c937e91f0f7c211fde4f7739ba6"
       url: "https://pub.dev"
     source: hosted
-    version: "9.1.0"
+    version: "9.1.1"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -278,10 +278,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "417e2a6f9d83ab396ec38ff4ea5da6c254da71e4db765ad737a42af6930140b7"
+      sha256: "797e1e341c3dd2f69f2dad42564a6feff3bfb87187d05abb93b9609e6f1645c3"
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.3"
+    version: "5.4.0"
   draggable_scrollbar:
     dependency: transitive
     description:
@@ -811,10 +811,10 @@ packages:
     dependency: transitive
     description:
       name: photo_manager
-      sha256: c1f21882f22c97cc85a8a67b08d7b979a03c9b7f18f940c10c6860b3a49581d3
+      sha256: "2d698826421ebd045ecc0df60422e9dd24bd22b178310b68444385f783735b55"
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.0"
+    version: "2.8.1"
   photo_view:
     dependency: transitive
     description:
@@ -835,10 +835,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: da3fdfeccc4d4ff2da8f8c556704c08f912542c5fb3cf2233ed75372384a034d
+      sha256: f4f88d4a900933e7267e2b353594774fc0d07fb072b47eedcd5b54e1ea3269f8
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.6"
+    version: "2.1.7"
   pointycastle:
     dependency: transitive
     description:
@@ -976,10 +976,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common
-      sha256: "8ed044102f3135add97be8653662052838859f5400075ef227f8ad72ae320803"
+      sha256: bb4738f15b23352822f4c42a531677e5c6f522e079461fd240ead29d8d8a54a6
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.0+1"
+    version: "2.5.0+2"
   stack_trace:
     dependency: transitive
     description:
@@ -1032,18 +1032,18 @@ packages:
     dependency: transitive
     description:
       name: talker
-      sha256: "9c587c0269e194ea5c161b01fa5c4e4120926f4b8fedcf9b3bd2466cb500b880"
+      sha256: "447411fbc819b5cc41b647d4134d18535bec50616c45ce78b451abd37a22cc91"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.4"
+    version: "3.1.6"
   talker_dio_logger:
     dependency: transitive
     description:
       name: talker_dio_logger
-      sha256: "5b8dd43e8d837b8e1d39d94157193ba691efe03ec009cd6f43c197bde6981ea5"
+      sha256: "61dbf3c936dd63142c0b21b7fe5ffccee31d0e76ca283eb5a45ccbe043725dac"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.3"
   talker_logger:
     dependency: transitive
     description:
@@ -1119,10 +1119,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: "4ac97281cf60e2e8c5cc703b2b28528f9b50c8f7cebc71df6bdf0845f647268a"
+      sha256: bba3373219b7abb6b5e0d071b0fe66dfbe005d07517a68e38d4fc3638f35c6d3
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.0"
+    version: "6.2.1"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -1273,7 +1273,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: f15fb92322126f175ae3f900af24097e9c263520
+      resolved-ref: "3f0bdd8a5201989b2e34ea190a14691296950cd6"
       url: "https://github.com/DangDDT/wss_repository.git"
     source: git
     version: "0.0.1"

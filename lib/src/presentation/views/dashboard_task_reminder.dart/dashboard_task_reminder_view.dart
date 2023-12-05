@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:task_management_module/core/constants/ui_constant.dart';
+import 'package:task_management_module/core/gens/assets.dart';
 import 'package:task_management_module/src/domain/enums/private/loading_enum.dart';
+import 'package:task_management_module/src/presentation/shared/loading_text.dart';
 import 'package:task_management_module/src/presentation/views/task_reminder/task_reminder_view.dart';
 
 import 'dashboard_task_reminder_controller.dart';
@@ -33,8 +36,22 @@ class DashboardTaskReminderView extends StatelessWidget {
                   switch (controller.events.state.value) {
                     case LoadingState.initial:
                     case LoadingState.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            LottieBuilder.asset(
+                              Assets
+                                  .task_management_module$assets_animations_loading_find_task_json,
+                              height: 100,
+                              width: 100,
+                            ),
+                            const SizedBox(height: 16),
+                            const LoadingText(
+                              placeholder: 'Đang tải dữ liệu',
+                            ),
+                          ],
+                        ),
                       );
                     case LoadingState.success:
                       return TaskReminderView.horizontalListCard(
@@ -56,7 +73,7 @@ class DashboardTaskReminderView extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Không có việc cần nhắc nhở',
+                              'Chưa có việc cần nhắc nhở',
                               style: kTheme.textTheme.titleMedium?.copyWith(
                                 color: Colors.grey,
                               ),

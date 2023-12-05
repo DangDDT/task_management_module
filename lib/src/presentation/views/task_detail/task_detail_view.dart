@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_preview/image_preview.dart';
+import 'package:lottie/lottie.dart';
+import 'package:task_management_module/core/gens/assets.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/task_model.dart';
 import 'package:task_management_module/src/domain/models/task_order_detail.dart';
 import 'package:task_management_module/src/presentation/shared/circle_avatar_with_error_handler.dart';
+import 'package:task_management_module/src/presentation/shared/loading_text.dart';
 import 'package:task_management_module/src/presentation/views/task_detail/task_detail_view_controller.dart';
 import 'package:task_management_module/src/presentation/widgets/state_render.dart';
 import 'package:task_management_module/src/presentation/widgets/task_wedding_card.dart';
@@ -271,8 +274,22 @@ class _TaskReminderSection extends GetView<TaskDetailViewController> {
               switch (controller.events.state.value) {
                 case LoadingState.initial:
                 case LoadingState.loading:
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        LottieBuilder.asset(
+                          Assets
+                              .task_management_module$assets_animations_loading_find_task_json,
+                          height: 100,
+                          width: 100,
+                        ),
+                        const SizedBox(height: 16),
+                        const LoadingText(
+                          placeholder: 'Đang tải dữ liệu',
+                        ),
+                      ],
+                    ),
                   );
                 case LoadingState.success:
                   return TaskReminderView.horizontalListCard(

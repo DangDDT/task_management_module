@@ -91,11 +91,11 @@ class _$ServerErrorCopyWithImpl<$Res, $Val extends ServerError>
 }
 
 /// @nodoc
-abstract class _$$_ServerErrorCopyWith<$Res>
+abstract class _$$ServerErrorImplCopyWith<$Res>
     implements $ServerErrorCopyWith<$Res> {
-  factory _$$_ServerErrorCopyWith(
-          _$_ServerError value, $Res Function(_$_ServerError) then) =
-      __$$_ServerErrorCopyWithImpl<$Res>;
+  factory _$$ServerErrorImplCopyWith(
+          _$ServerErrorImpl value, $Res Function(_$ServerErrorImpl) then) =
+      __$$ServerErrorImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -107,11 +107,11 @@ abstract class _$$_ServerErrorCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_ServerErrorCopyWithImpl<$Res>
-    extends _$ServerErrorCopyWithImpl<$Res, _$_ServerError>
-    implements _$$_ServerErrorCopyWith<$Res> {
-  __$$_ServerErrorCopyWithImpl(
-      _$_ServerError _value, $Res Function(_$_ServerError) _then)
+class __$$ServerErrorImplCopyWithImpl<$Res>
+    extends _$ServerErrorCopyWithImpl<$Res, _$ServerErrorImpl>
+    implements _$$ServerErrorImplCopyWith<$Res> {
+  __$$ServerErrorImplCopyWithImpl(
+      _$ServerErrorImpl _value, $Res Function(_$ServerErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -123,7 +123,7 @@ class __$$_ServerErrorCopyWithImpl<$Res>
     Object? generalError = freezed,
     Object? errors = null,
   }) {
-    return _then(_$_ServerError(
+    return _then(_$ServerErrorImpl(
       generalServerStatusCode: freezed == generalServerStatusCode
           ? _value.generalServerStatusCode
           : generalServerStatusCode // ignore: cast_nullable_to_non_nullable
@@ -150,8 +150,8 @@ class __$$_ServerErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ServerError implements _ServerError {
-  const _$_ServerError(
+class _$ServerErrorImpl implements _ServerError {
+  const _$ServerErrorImpl(
       {this.generalServerStatusCode,
       this.generalServerErrorId,
       this.generalMessage,
@@ -190,7 +190,7 @@ class _$_ServerError implements _ServerError {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServerError &&
+            other is _$ServerErrorImpl &&
             (identical(
                     other.generalServerStatusCode, generalServerStatusCode) ||
                 other.generalServerStatusCode == generalServerStatusCode) &&
@@ -215,8 +215,8 @@ class _$_ServerError implements _ServerError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ServerErrorCopyWith<_$_ServerError> get copyWith =>
-      __$$_ServerErrorCopyWithImpl<_$_ServerError>(this, _$identity);
+  _$$ServerErrorImplCopyWith<_$ServerErrorImpl> get copyWith =>
+      __$$ServerErrorImplCopyWithImpl<_$ServerErrorImpl>(this, _$identity);
 }
 
 abstract class _ServerError implements ServerError {
@@ -225,7 +225,7 @@ abstract class _ServerError implements ServerError {
       final String? generalServerErrorId,
       final String? generalMessage,
       final String? generalError,
-      final List<ServerErrorDetail> errors}) = _$_ServerError;
+      final List<ServerErrorDetail> errors}) = _$ServerErrorImpl;
 
   @override
 
@@ -245,6 +245,6 @@ abstract class _ServerError implements ServerError {
   List<ServerErrorDetail> get errors;
   @override
   @JsonKey(ignore: true)
-  _$$_ServerErrorCopyWith<_$_ServerError> get copyWith =>
+  _$$ServerErrorImplCopyWith<_$ServerErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -44,26 +44,31 @@ class FilterTaskBottomSheet extends StatelessWidget {
               topRight: Radius.circular(16.0),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _Title(),
-                if (config.isShowDueDate) const _DueDateSection(),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.tonal(
-                    onPressed: _.onApplyFilterTask,
-                    child: Text(
-                      'Áp dụng',
-                      style: kTheme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+          child: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _Title(),
+                  if (config.isShowDueDate) const _DueDateSection(),
+                ],
+              ),
+            ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.tonal(
+                  onPressed: _.onApplyFilterTask,
+                  child: Text(
+                    'Áp dụng',
+                    style: kTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         );

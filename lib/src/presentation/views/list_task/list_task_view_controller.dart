@@ -234,21 +234,22 @@ class ListTaskViewController extends GetxController
 
 class ListTaskTab {
   final TaskProgressEnum tabType;
-  const ListTaskTab({required this.tabType});
+  final Color color;
+  ListTaskTab({required this.tabType}) : color = tabType.color;
 
-  factory ListTaskTab.all() => const ListTaskTab(
+  factory ListTaskTab.all() => ListTaskTab(
         tabType: TaskProgressEnum.all,
       );
-  factory ListTaskTab.expected() => const ListTaskTab(
+  factory ListTaskTab.expected() => ListTaskTab(
         tabType: TaskProgressEnum.expected,
       );
-  factory ListTaskTab.toDo() => const ListTaskTab(
+  factory ListTaskTab.toDo() => ListTaskTab(
         tabType: TaskProgressEnum.toDo,
       );
-  factory ListTaskTab.inProgress() => const ListTaskTab(
+  factory ListTaskTab.inProgress() => ListTaskTab(
         tabType: TaskProgressEnum.inProgress,
       );
-  factory ListTaskTab.done() => const ListTaskTab(
+  factory ListTaskTab.done() => ListTaskTab(
         tabType: TaskProgressEnum.done,
       );
 

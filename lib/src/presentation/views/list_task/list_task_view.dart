@@ -2,9 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:lottie/lottie.dart';
 import 'package:task_management_module/core/core.dart';
+import 'package:task_management_module/core/gens/assets.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/task_model.dart';
+import 'package:task_management_module/src/presentation/shared/shared.dart';
 import 'package:task_management_module/src/presentation/views/list_task/list_task_view_controller.dart';
 import 'package:task_management_module/src/presentation/widgets/custom_text_field.dart';
 
@@ -62,7 +65,10 @@ class _ListTaskViewState extends State<ListTaskView> {
   Widget build(BuildContext context) {
     return GetBuilder<ListTaskViewController>(
       builder: (controller) {
-        return Padding(
+        return Container(
+          decoration: BoxDecoration(
+            color: kTheme.colorScheme.surfaceVariant.withOpacity(.1),
+          ),
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -147,16 +153,16 @@ class _TaskTabBar extends GetView<ListTaskViewController> {
       controller: controller.tabController,
       onTap: controller.onChangeTab,
       isScrollable: true,
-      indicatorColor: Colors.grey,
+      indicatorColor: Colors.transparent,
       indicatorPadding: const EdgeInsets.symmetric(vertical: 4.0),
-      indicator: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-        color: kTheme.colorScheme.primary,
-      ),
-      labelColor: kTheme.colorScheme.onPrimary,
+      labelColor: kTheme.colorScheme.onPrimaryContainer,
       unselectedLabelColor: Colors.grey,
       indicatorSize: TabBarIndicatorSize.tab,
       splashFactory: NoSplash.splashFactory,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: kTheme.colorScheme.primaryContainer,
+      ),
       labelStyle: kTheme.textTheme.bodyLarge?.copyWith(
         fontWeight: FontWeight.w600,
       ),
@@ -167,13 +173,8 @@ class _TaskTabBar extends GetView<ListTaskViewController> {
       tabs: (controller.moduleConfig.tabsInTaskView ?? ListTaskTab.defaultTabs)
           .map(
             (e) => Tab(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  e.tabType.name,
-                ),
+              child: Text(
+                e.tabType.name,
               ),
             ),
           )
@@ -190,6 +191,7 @@ class _TaskListBuilder extends GetView<ListTaskViewController> {
     return RefreshIndicator(
       onRefresh: controller.onRefreshList,
       child: PagedListView<int, TaskWeddingModel>.separated(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
         physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics()),
         pagingController: controller.pagingController,
@@ -288,9 +290,23 @@ class _LoadingItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: (MediaQuery.of(context).size.height / 2) - 150),
-      child: const Center(
-        child: CircularProgressIndicator(),
+          vertical: (MediaQuery.of(context).size.height / 2) - 200),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LottieBuilder.asset(
+              Assets
+                  .task_management_module$assets_animations_loading_find_task_json,
+              height: 100,
+              width: 100,
+            ),
+            const SizedBox(height: 16),
+            const LoadingText(
+              placeholder: 'Đang tải dữ liệu',
+            ),
+          ],
+        ),
       ),
     );
   }
