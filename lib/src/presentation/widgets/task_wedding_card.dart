@@ -187,7 +187,7 @@ class TaskWeddingCard extends StatelessWidget {
                 ],
               ),
               kGapH8,
-              Row(
+              Wrap(
                 children: [
                   if (config.isShowTag) ...[
                     CustomChip(
@@ -234,7 +234,7 @@ class TaskWeddingCard extends StatelessWidget {
                           size: 16.0,
                           color: Colors.red,
                         ),
-                        title: 'Quá hạn hoàn thành',
+                        title: 'Quá hạn',
                         color: Colors.red,
                         textStyle: kTheme.textTheme.bodySmall?.copyWith(
                           color: kTheme.colorScheme.onSurface,
