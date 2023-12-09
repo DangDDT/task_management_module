@@ -16,7 +16,7 @@ extension DateTimeExt on DateTime {
 
   DateTime lastTimeOfDate() => DateTime(year, month, day, 23, 59, 59);
 
-  String toReadableDueDateWithHourString() {
+  String toReadableDueDateWithHourString(String prefix) {
     final toDayWithTime = DateTime.now();
     final toDay = DateTime(
       toDayWithTime.year,
@@ -34,13 +34,13 @@ extension DateTimeExt on DateTime {
     final hours = data.difference(toDay).inHours;
     if (hours < 0) {
       final days = hours ~/ 24;
-      return 'Quá hạn ${days.abs().toString()} ngày ${hours % 24} giờ';
+      return '$prefix ${days.abs().toString()} ngày ${hours % 24} giờ';
     }
     final days = hours ~/ 24;
     return "Còn $days ngày ${hours % 24} giờ";
   }
 
-  String toReadableDueDateString() {
+  String toReadableDueDateString(String prefix) {
     final toDayWithTime = DateTime.now();
     final toDay = DateTime(
       toDayWithTime.year,
@@ -62,7 +62,7 @@ extension DateTimeExt on DateTime {
       if (dateBetween.inDays >= 0) {
         return 'Còn ${dateBetween.inDays.abs().toString()} ngày';
       }
-      return 'Quá hạn ${dateBetween.inDays.abs().toString()} ngày';
+      return '$prefix ${dateBetween.inDays.abs().toString()} ngày';
     }
     return DateFormat('dd/MM/yyyy').format(this);
   }

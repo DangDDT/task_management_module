@@ -73,6 +73,7 @@ class TaskMasterModel {
 
 class TaskWeddingModel extends BaseTaskModel {
   final TaskOrderDetailModel orderDetail;
+  final DateTime? expectedDoDate;
   final TaskCustomerModel customer;
   final EvidenceModel? evidence;
 
@@ -86,6 +87,7 @@ class TaskWeddingModel extends BaseTaskModel {
     required super.taskMaster,
     required super.status,
     required super.comments,
+    required this.expectedDoDate,
     required this.orderDetail,
     required this.customer,
     this.evidence,
@@ -98,6 +100,7 @@ class TaskWeddingModel extends BaseTaskModel {
       name: name,
       description: description,
       createdDate: createdDate,
+      expectedDoDate: expectedDoDate,
       duedate: duedate,
       taskMaster: taskMaster,
       status: status,
@@ -115,6 +118,7 @@ class TaskWeddingModel extends BaseTaskModel {
       name: 'Đang tải...',
       description: 'Đang tải...',
       createdDate: DateTime.now(),
+      expectedDoDate: DateTime.now(),
       duedate: DateTime.now(),
       taskMaster: TaskMasterModel.loading(),
       status: TaskProgressEnum.toDo,
@@ -131,6 +135,7 @@ class TaskWeddingModel extends BaseTaskModel {
       name: 'Lỗi',
       description: 'Không có dữ liệu',
       createdDate: DateTime.now(),
+      expectedDoDate: DateTime.now(),
       duedate: DateTime.now(),
       taskMaster: TaskMasterModel.error(),
       status: TaskProgressEnum.toDo,

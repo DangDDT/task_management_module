@@ -76,6 +76,8 @@ class TaskDetailView extends StatelessWidget {
                           code: code,
                           description: description,
                           duedate: duedate,
+                          expectedDoDate:
+                              controller.taskModel.data.value.expectedDoDate,
                           taskMasterName: taskMasterName,
                           customerName: customerName,
                           serviceNames: serviceNames,
@@ -552,7 +554,7 @@ class _TaskDetailsSection extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(8.0),
           child: _TaskDetailSection(
-            taskOrderDetail: [item.orderDetail].first,
+            taskModel: item,
           ),
         ),
       ),
@@ -758,10 +760,10 @@ class _OrderDetailSection extends GetView<TaskDetailViewController> {
 class _TaskDetailSection extends GetView<TaskDetailViewController> {
   const _TaskDetailSection({
     super.key,
-    required this.taskOrderDetail,
+    required this.taskModel,
   });
 
-  final TaskOrderDetailModel taskOrderDetail;
+  final TaskWeddingModel taskModel;
 
   @override
   Widget build(BuildContext context) {
@@ -771,9 +773,9 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
         _RowServiceData(
           icon: Icons.person,
           title: 'Người nhận',
-          content: taskOrderDetail.fullName.isEmpty
+          content: taskModel.orderDetail.fullName.isEmpty
               ? '< Chưa có thông tin >'
-              : taskOrderDetail.fullName,
+              : taskModel.orderDetail.fullName,
           titleStyle: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.colorScheme.onBackground,
@@ -784,9 +786,9 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
         ),
         kGapH8,
         _RowServiceData(
-          icon: Icons.add_shopping_cart,
+          icon: Icons.event,
           title: 'Ngày khách cần',
-          content: taskOrderDetail.eventDate.toFullString(),
+          content: taskModel.orderDetail.eventDate.toFullString(),
           titleStyle: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.colorScheme.onBackground,
@@ -795,13 +797,48 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        if (controller.config.viewByRoleConfig?.isShowExpectedDoDateValue ??
+            false) ...[
+          kGapH8,
+          _RowServiceData(
+            icon: Icons.event_available,
+            title: 'Dự kiến thực hiện',
+            content: taskModel.expectedDoDate?.toFullString() ??
+                '< Chưa có thông tin >',
+            titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
+            contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.primary,
+            ),
+          ),
+        ],
+        if (controller.config.viewByRoleConfig?.isShowDeadlineDateValue ??
+            false) ...[
+          kGapH8,
+          _RowServiceData(
+            icon: Icons.event_busy,
+            title: 'Hạn thực hiện',
+            content: taskModel.duedate.toFullString(),
+            titleStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.onBackground,
+            ),
+            contentStyle: kTheme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kTheme.colorScheme.error,
+            ),
+          ),
+        ],
         kGapH8,
         _RowServiceData(
           icon: Icons.phone,
           title: 'SĐT người nhận',
-          content: taskOrderDetail.phone.isEmpty
+          content: taskModel.orderDetail.phone.isEmpty
               ? '< Chưa có thông tin >'
-              : taskOrderDetail.phone,
+              : taskModel.orderDetail.phone,
           titleStyle: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.colorScheme.onBackground,
@@ -814,9 +851,9 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
         _RowServiceData(
           icon: Icons.location_on,
           title: 'Địa chỉ được đặt',
-          content: taskOrderDetail.address.isEmpty
+          content: taskModel.orderDetail.address.isEmpty
               ? '< Chưa có thông tin > '
-              : taskOrderDetail.address,
+              : taskModel.orderDetail.address,
           titleStyle: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.colorScheme.onBackground,
@@ -829,9 +866,9 @@ class _TaskDetailSection extends GetView<TaskDetailViewController> {
         _RowServiceData(
           icon: Icons.note,
           title: 'Ghi chú của khách hàng',
-          content: taskOrderDetail.description.isEmpty
+          content: taskModel.orderDetail.description.isEmpty
               ? '< Không có ghi chú >'
-              : taskOrderDetail.description,
+              : taskModel.orderDetail.description,
           titleStyle: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.colorScheme.onBackground,

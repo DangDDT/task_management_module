@@ -26,7 +26,8 @@ class TaskAlmostDueView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Công việc cần hoàn thành',
+                    controller.config.viewByRoleConfig?.almostDueDateTitle ??
+                        'Công việc cần thực hiện',
                     style: kTheme.textTheme.headlineSmall,
                   ),
                   kGapW4,
@@ -173,6 +174,7 @@ class _SlideBuilder extends GetView<TaskAlmostDueController> {
         return itemBuilder(task, index);
       },
       options: CarouselOptions(
+        height: 240,
         viewportFraction: 0.9,
         enableInfiniteScroll: false,
         enlargeCenterPage: true,
@@ -205,6 +207,7 @@ class _TaskAlarmReminderCard extends GetView<TaskAlmostDueController> {
       name: task.name,
       description: task.description,
       duedate: task.duedate,
+      expectedDoDate: task.expectedDoDate,
       taskMasterName: task.taskMaster?.name ?? '',
       customerName: task.customer.fullName,
       serviceNames: [task.orderDetail].map((e) => e.service.name).toList(),

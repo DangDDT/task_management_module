@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:task_management_module/core/core.dart';
 import 'package:task_management_module/src/domain/enums/private/task_categories_enum.dart';
 import 'package:task_management_module/src/domain/models/evidence.dart';
@@ -11,6 +12,8 @@ import 'package:wss_repository/entities/task.dart';
 import '../../domain.dart';
 
 class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
+  final _config = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
+
   @override
   TaskWeddingModel mapData(Task entity, Mapper mapper) {
     return TaskWeddingModel(
@@ -101,7 +104,9 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
       ),
       createdDate:
           entity.createDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
-      duedate:
+      duedate: _config.viewByRoleConfig?.getDueDateByRole?.call(entity) ??
+          DefaultValueMapperConstants.defaultDateTimeValue,
+      expectedDoDate:
           entity.startDate ?? DefaultValueMapperConstants.defaultDateTimeValue,
       description: '',
     );

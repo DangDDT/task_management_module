@@ -49,7 +49,7 @@ class ActionConfig {
 }
 
 class TaskWeddingCard extends StatelessWidget {
-  const TaskWeddingCard({
+  TaskWeddingCard({
     super.key,
     this.onTap,
     required this.taskId,
@@ -57,6 +57,7 @@ class TaskWeddingCard extends StatelessWidget {
     required this.name,
     required this.description,
     required this.duedate,
+    required this.expectedDoDate,
     required this.taskMasterName,
     required this.customerName,
     required this.serviceNames,
@@ -74,6 +75,7 @@ class TaskWeddingCard extends StatelessWidget {
         name = item?.name ?? '',
         description = item?.description ?? '',
         duedate = item?.duedate ?? DateTime.now(),
+        expectedDoDate = item?.expectedDoDate ?? DateTime.now(),
         customerName = item?.customer.fullName ?? '',
         taskMasterName = item?.taskMaster?.name ?? '',
         serviceNames =
@@ -89,11 +91,14 @@ class TaskWeddingCard extends StatelessWidget {
   final String name;
   final String description;
   final DateTime duedate;
+  final DateTime? expectedDoDate;
   final String taskMasterName;
   final String customerName;
   final List<String> serviceNames;
   final TaskProgressEnum status;
   final TaskServiceCardViewConfig config;
+
+  final _moduleConfig = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
 
   Future<void> showActionDialog() async {
     await Get.bottomSheet(
@@ -374,34 +379,85 @@ class TaskWeddingCard extends StatelessWidget {
                           ],
                         ),
                       ],
+                      if (_moduleConfig
+                              .viewByRoleConfig?.isShowExpectedDoDateValue ??
+                          false) ...[
+                        kGapH12,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Dự kiến làm: ',
+                                      style: kTheme.textTheme.bodySmall,
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          expectedDoDate?.toFullString() ?? '',
+                                      style:
+                                          kTheme.textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (config.isShowCountDown) ...[
+                              kGapW4,
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '(${expectedDoDate?.toReadableDueDateWithHourString('Đã qua') ?? ''})',
+                                  style: kTheme.textTheme.bodySmall?.copyWith(
+                                    color: kTheme.colorScheme.error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ] else
+                        const SizedBox.shrink(),
                       if (config.isShowDueDate) ...[
                         kGapH12,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Ngày khách cần: ',
-                                    style: kTheme.textTheme.bodySmall,
-                                  ),
-                                  TextSpan(
-                                    text: duedate.toFullString(),
-                                    style: kTheme.textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          '${_moduleConfig.viewByRoleConfig?.cardDueDateTitle ?? 'Hạn chót'}: ',
+                                      style: kTheme.textTheme.bodySmall,
                                     ),
-                                  ),
-                                ],
+                                    TextSpan(
+                                      text: duedate.toFullString(),
+                                      style:
+                                          kTheme.textTheme.bodySmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             if (config.isShowCountDown) ...[
                               kGapW4,
-                              Text(
-                                '(${duedate.toReadableDueDateWithHourString()})',
-                                style: kTheme.textTheme.bodySmall?.copyWith(
-                                  color: kTheme.colorScheme.error,
-                                  fontWeight: FontWeight.bold,
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '(${duedate.toReadableDueDateWithHourString('Quá hạn')})',
+                                  style: kTheme.textTheme.bodySmall?.copyWith(
+                                    color: kTheme.colorScheme.error,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -414,26 +470,6 @@ class TaskWeddingCard extends StatelessWidget {
             ),
           ),
         ),
-        // Positioned(
-        //   top: 14,
-        //   right: 16,
-        //   child: Row(
-        //     children: [
-        //       Container(
-        //         width: 14.0,
-        //         height: 14.0,
-        //         decoration: BoxDecoration(
-        //           color: kTheme.colorScheme.surfaceVariant.withOpacity(0.4),
-        //           shape: BoxShape.circle,
-        //           border: Border.all(
-        //             color: kTheme.disabledColor,
-        //             width: 2.0,
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
         if (config.isFilled) ...[
           Positioned(
             top: -4,

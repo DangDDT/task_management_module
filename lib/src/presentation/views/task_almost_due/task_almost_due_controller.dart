@@ -16,6 +16,8 @@ import '../../global/module_controller.dart';
 import '../../view_models/state_model.dart';
 
 class TaskAlmostDueController extends GetxController {
+  final config = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
+
   ///Controllers
   final moduleController =
       Get.find<ModuleController>(tag: ModuleController.tag);

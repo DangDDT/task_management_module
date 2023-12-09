@@ -41,7 +41,6 @@ class ListTaskViewController extends GetxController
     TaskProgressEnum.all,
     TaskProgressEnum.toDo,
     TaskProgressEnum.inProgress,
-    TaskProgressEnum.done,
   ];
 
   final List<TaskProgressEnum> taskWillShowCountDown = [
@@ -91,6 +90,10 @@ class ListTaskViewController extends GetxController
   }
 
   Future<void> onChangeTab(int index) async {
+    if (selectedTab.value.tabType ==
+        moduleConfig.tabsInTaskView![index].tabType) {
+      return;
+    }
     selectedTab.value = moduleConfig.tabsInTaskView != null
         ? moduleConfig.tabsInTaskView![index]
         : ListTaskTab.defaultTabs[index];

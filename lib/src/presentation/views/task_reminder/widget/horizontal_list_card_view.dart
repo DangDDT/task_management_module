@@ -91,8 +91,10 @@ class _TaskEventItem extends StatelessWidget {
                       kGapW8,
                       Text(
                         item.isNotify
-                            ? item.eventAt.toReadableDueDateWithHourString()
-                            : item.eventAt.toReadableDueDateString(),
+                            ? item.eventAt
+                                .toReadableDueDateWithHourString('Đã nhắc nhở')
+                            : item.eventAt
+                                .toReadableDueDateString('Đã nhắc nhở'),
                         style: kTheme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),

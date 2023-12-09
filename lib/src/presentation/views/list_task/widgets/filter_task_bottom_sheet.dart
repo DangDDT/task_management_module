@@ -51,7 +51,7 @@ class FilterTaskBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const _Title(),
-                  if (config.isShowDueDate) const _DueDateSection(),
+                  if (config.isShowDueDate) _DueDateSection(),
                 ],
               ),
             ),
@@ -107,15 +107,16 @@ class _Title extends GetView<FilterTaskBottomSheetController> {
 }
 
 class _DueDateSection extends GetView<FilterTaskBottomSheetController> {
-  const _DueDateSection();
+  _DueDateSection();
 
+  final _config = Get.find<ModuleConfig>(tag: ModuleConfig.tag);
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Ngày hết hạn:',
+          '${_config.viewByRoleConfig?.filterDueDateTitle ?? 'Ngày hết hạn'}:',
           style: kTheme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: kTheme.disabledColor,

@@ -1,6 +1,6 @@
 // // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'dart:convert';
+import 'package:wss_repository/entities/task.dart';
 
 import 'task_management_module.dart';
 
@@ -95,55 +95,22 @@ class UserConfig {
 class ViewByRoleConfig {
   final bool isShowComissionValue;
   final bool isShowRevenueValue;
+  final bool isShowExpectedDoDateValue;
+  final bool isShowDeadlineDateValue;
+  final String filterDueDateTitle;
+  final String cardDueDateTitle;
+  final String almostDueDateTitle;
+  final DateTime? Function(Task task)? getDueDateByRole;
   ViewByRoleConfig({
     this.isShowComissionValue = true,
     this.isShowRevenueValue = true,
+    this.isShowExpectedDoDateValue = false,
+    this.isShowDeadlineDateValue = false,
+    this.filterDueDateTitle = 'Ngày hết hạn',
+    this.cardDueDateTitle = 'Hạn chót',
+    this.almostDueDateTitle = 'Công việc cần thực hiện',
+    required this.getDueDateByRole,
   });
-
-  ViewByRoleConfig copyWith({
-    bool? isShowComissionValue,
-    bool? isShowRevenueValue,
-  }) {
-    return ViewByRoleConfig(
-      isShowComissionValue: isShowComissionValue ?? this.isShowComissionValue,
-      isShowRevenueValue: isShowRevenueValue ?? this.isShowRevenueValue,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'isShowComissionValue': isShowComissionValue,
-      'isShowRevenueValue': isShowRevenueValue,
-    };
-  }
-
-  factory ViewByRoleConfig.fromMap(Map<String, dynamic> map) {
-    return ViewByRoleConfig(
-      isShowComissionValue: map['isShowComissionValue'] as bool,
-      isShowRevenueValue: map['isShowRevenueValue'] as bool,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory ViewByRoleConfig.fromJson(String source) =>
-      ViewByRoleConfig.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() =>
-      'ViewConfig(isShowComissionValue: $isShowComissionValue, isShowRevenueValue: $isShowRevenueValue)';
-
-  @override
-  bool operator ==(covariant ViewByRoleConfig other) {
-    if (identical(this, other)) return true;
-
-    return other.isShowComissionValue == isShowComissionValue &&
-        other.isShowRevenueValue == isShowRevenueValue;
-  }
-
-  @override
-  int get hashCode =>
-      isShowComissionValue.hashCode ^ isShowRevenueValue.hashCode;
 }
 
 class AuthConfig {
