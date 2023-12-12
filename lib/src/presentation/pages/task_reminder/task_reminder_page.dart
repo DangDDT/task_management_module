@@ -67,18 +67,21 @@ class _CalendarWidget extends GetView<TaskReminderController> {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        final startDate = controller.taskModel.createdDate;
+        final startDate = controller.taskModel.createdDate.firstTimeOfDate();
         final endDate = controller.taskModel.duedate.lastTimeOfDate();
         return TableCalendar(
           daysOfWeekHeight: 48,
-          firstDay: controller.taskModel.createdDate,
-          lastDay: controller.taskModel.duedate,
+          firstDay: controller.taskModel.createdDate.firstTimeOfDate(),
+          lastDay: controller.taskModel.duedate.lastTimeOfDate(),
           focusedDay: controller.selectedDate.value,
           currentDay: DateTime.now(),
           rangeStartDay: startDate.floorDate,
           rangeEndDay: endDate,
           enabledDayPredicate: (day) {
-            return day.isBetween(startDate, endDate);
+            return day.isBetween(
+              startDate.firstTimeOfDate(),
+              endDate.lastTimeOfDate(),
+            );
           },
           headerVisible: true,
           formatAnimationCurve: Curves.easeInOut,
@@ -88,7 +91,8 @@ class _CalendarWidget extends GetView<TaskReminderController> {
               : CalendarFormat.twoWeeks,
           daysOfWeekVisible: true,
           onDaySelected: (selectedDate, _) {
-            if (!selectedDate.isBetween(startDate, endDate)) {
+            if (!selectedDate.isBetween(
+                startDate.firstTimeOfDate(), endDate.lastTimeOfDate())) {
               return;
             }
             controller.onDaySelected(selectedDate);
@@ -115,7 +119,10 @@ class _CalendarWidget extends GetView<TaskReminderController> {
               );
             },
             rangeHighlightBuilder: (context, date, _) {
-              if (date.isBetween(startDate, DateTime.now())) {
+              if (date.isBetween(
+                startDate.firstTimeOfDate(),
+                DateTime.now().lastTimeOfDate(),
+              )) {
                 return Container(
                   margin: const EdgeInsets.all(4),
                   alignment: Alignment.center,
@@ -126,7 +133,8 @@ class _CalendarWidget extends GetView<TaskReminderController> {
                     ),
                   ),
                 );
-              } else if (date.isBetween(DateTime.now(), endDate)) {
+              } else if (date.isBetween(
+                  DateTime.now().firstTimeOfDate(), endDate.lastTimeOfDate())) {
                 return Container(
                   margin: const EdgeInsets.all(4),
                   alignment: Alignment.center,
