@@ -267,7 +267,7 @@ class _EventBuilder extends GetView<TaskReminderController> {
               ),
             ),
             trailing: !controller.selectedDate.value.isBetween(
-              DateTime.now(),
+              DateTime.now().firstTimeOfDate(),
               controller.taskModel.duedate.lastTimeOfDate(),
             )
                 ? null
