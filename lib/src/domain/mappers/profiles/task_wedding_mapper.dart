@@ -60,9 +60,9 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
               creator: TaskCommentCreatorModel(
                 id: e.createBy ??
                     DefaultValueMapperConstants.defaultStringValue,
-                fullName: e.createBy?.fullname ??
+                fullName: e.createByNavigation?.fullname ??
                     DefaultValueMapperConstants.defaultStringValue,
-                avatar: e.createBy?.imageUrl ??
+                avatar: e.createByNavigation?.imageUrl ??
                     DefaultValueMapperConstants.defaultStringValue,
               ),
             ),

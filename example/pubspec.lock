@@ -1273,7 +1273,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "3f0bdd8a5201989b2e34ea190a14691296950cd6"
+      resolved-ref: "67ffad7781bc74b3080dc67e88dbc410c61924c6"
       url: "https://github.com/DangDDT/wss_repository.git"
     source: git
     version: "0.0.1"
