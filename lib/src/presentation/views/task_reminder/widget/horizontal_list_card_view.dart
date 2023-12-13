@@ -42,10 +42,9 @@ class _TaskEventLayoutBuilder extends StatelessWidget {
       ),
       options: CarouselOptions(
         height: 120,
-        viewportFraction: .8,
+        viewportFraction: .98,
         enlargeCenterPage: true,
-        aspectRatio: 16 / 9,
-        enableInfiniteScroll: true,
+        enableInfiniteScroll: false,
         autoPlay: true,
         autoPlayAnimationDuration: const Duration(milliseconds: 800),
         autoPlayCurve: Curves.fastOutSlowIn,
@@ -69,8 +68,11 @@ class _TaskEventItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Container(
         decoration: BoxDecoration(
-          color: kTheme.colorScheme.primaryContainer.withOpacity(0.5),
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: item.color,
+            width: 1.5,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -91,10 +93,8 @@ class _TaskEventItem extends StatelessWidget {
                       kGapW8,
                       Text(
                         item.isNotify
-                            ? item.eventAt
-                                .toReadableDueDateWithHourString('Đã nhắc nhở')
-                            : item.eventAt
-                                .toReadableDueDateString('Đã nhắc nhở'),
+                            ? item.eventAt.toFullString()
+                            : item.eventAt.toDateReadable(),
                         style: kTheme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
