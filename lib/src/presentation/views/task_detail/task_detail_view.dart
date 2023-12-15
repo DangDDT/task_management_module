@@ -359,6 +359,22 @@ class _ServiceTitle extends GetView<TaskDetailViewController> {
               color: kTheme.colorScheme.onBackground,
             ),
           ),
+          Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.hashtag,
+                color: kTheme.colorScheme.primary,
+                size: 18,
+              ),
+              Text(
+                item.orderDetail.service.code,
+                style: kTheme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: kTheme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

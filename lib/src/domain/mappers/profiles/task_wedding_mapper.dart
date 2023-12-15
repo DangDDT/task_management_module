@@ -32,6 +32,8 @@ class TaskWeddingMapper extends BaseDataMapperProfile<Task, TaskWeddingModel> {
         phone: entity.orderDetail?.order?.phone ??
             DefaultValueMapperConstants.defaultStringValue,
         service: TaskServiceModel(
+          code: entity.orderDetail?.service?.code ??
+              DefaultValueMapperConstants.defaultStringValue,
           name: entity.orderDetail?.service?.name ??
               DefaultValueMapperConstants.defaultStringValue,
           price: entity.orderDetail?.price?.toDouble() ??
