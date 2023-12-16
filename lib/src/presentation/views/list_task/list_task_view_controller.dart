@@ -15,6 +15,65 @@ import '../../../../core/utils/helpers/logger.dart';
 import '../../../domain/models/task_model.dart';
 import 'widgets/filter_task_bottom_sheet.dart';
 
+enum SortBy {
+  code,
+  startDate,
+  createDate;
+
+  String toReadableString() {
+    switch (this) {
+      case SortBy.code:
+        return 'Mã công việc';
+      case SortBy.startDate:
+        return 'Ngày bắt đầu';
+      case SortBy.createDate:
+        return 'Ngày tạo';
+      default:
+        return '';
+    }
+  }
+
+  String toCode() {
+    switch (this) {
+      case SortBy.code:
+        return 'Code';
+      case SortBy.startDate:
+        return 'StartDate';
+      case SortBy.createDate:
+        return 'CreateDate';
+      default:
+        return '';
+    }
+  }
+}
+
+enum SortType {
+  asc,
+  desc;
+
+  String toReadableString() {
+    switch (this) {
+      case SortType.asc:
+        return 'Tăng dần';
+      case SortType.desc:
+        return 'Giảm dần';
+      default:
+        return '';
+    }
+  }
+
+  String toCode() {
+    switch (this) {
+      case SortType.asc:
+        return 'ASC';
+      case SortType.desc:
+        return 'DESC';
+      default:
+        return '';
+    }
+  }
+}
+
 class ListTaskViewController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final ListTaskTab? initialTabType;
@@ -63,6 +122,9 @@ class ListTaskViewController extends GetxController
       initialTabType != null ? initialTabType!.obs : ListTaskTab.all().obs;
   final Rxn<FilterTask> filter = Rxn<FilterTask>();
 
+  final Rx<SortBy> sortBy = SortBy.createDate.obs;
+  final Rx<SortType> sortType = SortType.desc.obs;
+
   @override
   onInit() {
     super.onInit();
@@ -87,6 +149,24 @@ class ListTaskViewController extends GetxController
   onClose() {
     searchController.dispose();
     super.onClose();
+  }
+
+  Future<void> onChangeSortBy(SortBy? value) async {
+    if (value == null || value == sortBy.value) {
+      return;
+    }
+    sortBy.value = value;
+    currentPage.value = 0;
+    pagingController.refresh();
+  }
+
+  Future<void> onChangeSortType(SortType? value) async {
+    if (value == null || value == sortType.value) {
+      return;
+    }
+    sortType.value = value;
+    currentPage.value = 0;
+    pagingController.refresh();
   }
 
   Future<void> onChangeTab(int index) async {
@@ -122,8 +202,8 @@ class ListTaskViewController extends GetxController
         GetTaskWeddingParam(
           pageIndex: pageKey,
           pageSize: _pageSize,
-          orderBy: 'CreateDate',
-          orderType: 'DESC',
+          orderBy: sortBy.value.toCode(),
+          orderType: sortType.value.toCode(),
           startDateFrom: filter.value?.duedate?.firstTimeOfDate(),
           startDateTo: filter.value?.duedate?.lastTimeOfDate(),
           status: selectedTab.value.tabType.isAll

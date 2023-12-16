@@ -87,8 +87,9 @@ class _ListTaskViewState extends State<ListTaskView> {
                       ],
                     )),
               ),
+              const _SortBar(),
+              const Divider(thickness: 1, indent: 8, endIndent: 8),
               if (widget.config.isShowTabBar) ...[
-                kGapH12,
                 const _TaskTabBar(),
               ],
               kGapH8,
@@ -98,6 +99,94 @@ class _ListTaskViewState extends State<ListTaskView> {
         );
       },
     );
+  }
+}
+
+class _SortBar extends GetView<ListTaskViewController> {
+  const _SortBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Lọc theo:',
+                  style: kTheme.textTheme.bodyMedium?.copyWith(
+                    color: kTheme.colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                DropdownButton(
+                  style: kTheme.textTheme.bodyMedium?.copyWith(
+                    color: kTheme.colorScheme.onPrimaryContainer,
+                  ),
+                  alignment: Alignment.centerRight,
+                  value: controller.sortBy.value,
+                  underline: const SizedBox.shrink(),
+                  items: [
+                    for (final item in SortBy.values)
+                      DropdownMenuItem(
+                        value: item,
+                        child: Text(item.toReadableString()),
+                      )
+                  ],
+                  onChanged: (value) {
+                    controller.onChangeSortBy(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.circle_rounded,
+            size: 9,
+            color: kTheme.colorScheme.onPrimaryContainer,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Thứ tự:',
+                  style: kTheme.textTheme.bodyMedium?.copyWith(
+                    color: kTheme.colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                DropdownButton(
+                  style: kTheme.textTheme.bodyMedium?.copyWith(
+                    color: kTheme.colorScheme.onPrimaryContainer,
+                  ),
+                  alignment: Alignment.centerRight,
+                  value: controller.sortType.value,
+                  underline: const SizedBox.shrink(),
+                  items: [
+                    for (final item in SortType.values)
+                      DropdownMenuItem(
+                        value: item,
+                        child: Text(item.toReadableString()),
+                      )
+                  ],
+                  onChanged: (value) {
+                    controller.onChangeSortType(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    });
   }
 }
 
@@ -149,7 +238,7 @@ class _TaskTabBar extends GetView<ListTaskViewController> {
   @override
   Widget build(BuildContext context) {
     return TabBar(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
       controller: controller.tabController,
       onTap: controller.onChangeTab,
       isScrollable: true,
@@ -163,10 +252,10 @@ class _TaskTabBar extends GetView<ListTaskViewController> {
         borderRadius: BorderRadius.circular(8.0),
         color: kTheme.colorScheme.primaryContainer,
       ),
-      labelStyle: kTheme.textTheme.bodyLarge?.copyWith(
+      labelStyle: kTheme.textTheme.bodyMedium?.copyWith(
         fontWeight: FontWeight.w600,
       ),
-      unselectedLabelStyle: kTheme.textTheme.bodyLarge?.copyWith(
+      unselectedLabelStyle: kTheme.textTheme.bodyMedium?.copyWith(
         fontWeight: FontWeight.normal,
       ),
       dividerColor: Colors.transparent,
