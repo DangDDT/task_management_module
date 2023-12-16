@@ -122,7 +122,7 @@ class ListTaskViewController extends GetxController
         GetTaskWeddingParam(
           pageIndex: pageKey,
           pageSize: _pageSize,
-          orderBy: 'StartDate',
+          orderBy: 'CreateDate',
           orderType: 'DESC',
           startDateFrom: filter.value?.duedate?.firstTimeOfDate(),
           startDateTo: filter.value?.duedate?.lastTimeOfDate(),
