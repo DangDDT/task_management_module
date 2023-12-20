@@ -335,6 +335,9 @@ class ListTaskTab {
   factory ListTaskTab.done() => ListTaskTab(
         tabType: TaskProgressEnum.done,
       );
+  factory ListTaskTab.cancel() => ListTaskTab(
+        tabType: TaskProgressEnum.cancel,
+      );
 
   static List<ListTaskTab> get defaultTabs => [
         ListTaskTab.all(),
@@ -342,5 +345,6 @@ class ListTaskTab {
         ListTaskTab.toDo(),
         ListTaskTab.inProgress(),
         ListTaskTab.done(),
+        ListTaskTab.cancel(),
       ];
 }

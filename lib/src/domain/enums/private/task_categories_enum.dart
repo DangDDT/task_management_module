@@ -7,7 +7,8 @@ enum TaskProgressEnum {
   expected('Dự kiến', 'EXPECTED'),
   toDo('Mới giao', 'TO_DO'),
   inProgress('Đang thực hiện', 'IN_PROGRESS'),
-  done('Đã hoàn thành', 'DONE');
+  done('Đã hoàn thành', 'DONE'),
+  cancel('Đã hủy', 'CANCEL');
 
   final String name;
   final String code;
@@ -24,6 +25,8 @@ enum TaskProgressEnum {
 
   bool get isDone => this == TaskProgressEnum.done;
 
+  bool get isCancel => this == TaskProgressEnum.cancel;
+
   String toCode() {
     switch (this) {
       case TaskProgressEnum.expected:
@@ -34,6 +37,8 @@ enum TaskProgressEnum {
         return 'IN_PROGRESS';
       case TaskProgressEnum.done:
         return 'DONE';
+      case TaskProgressEnum.cancel:
+        return 'CANCEL';
       default:
         return '';
     }
@@ -49,6 +54,8 @@ enum TaskProgressEnum {
         return TaskProgressEnum.done;
       case 'EXPECTED' || 'Expected' || 'expected':
         return TaskProgressEnum.expected;
+      case 'CANCEL' || 'Cancel' || 'cancel':
+        return TaskProgressEnum.cancel;
       default:
         return TaskProgressEnum.all;
     }
@@ -64,6 +71,8 @@ enum TaskProgressEnum {
         return Colors.orange;
       case TaskProgressEnum.done:
         return Colors.green;
+      case TaskProgressEnum.cancel:
+        return Colors.red;
       default:
         return Colors.white;
     }
@@ -77,6 +86,8 @@ enum TaskProgressEnum {
         return Icons.accessibility_new;
       case TaskProgressEnum.done:
         return Icons.check;
+      case TaskProgressEnum.cancel:
+        return Icons.cancel;
       default:
         return Icons.new_releases;
     }
